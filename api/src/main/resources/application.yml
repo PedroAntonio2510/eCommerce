@@ -1,0 +1,17 @@
+#spring.application.name=api
+#spring.datasource.url=jdbc:postgresql://localhost:5432/ecommerceapiDB
+#spring.datasource.username=postgres
+#spring.datasource.password=postgres
+#spring.jpa.show-sql=true
+#spring.jpa.hibernate.ddl-auto=update
+spring:
+  application:
+    name: api
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommerceapiDB
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
