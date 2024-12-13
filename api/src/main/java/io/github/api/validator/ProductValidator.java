@@ -16,7 +16,7 @@ public class ProductValidator {
 
     public void validate(Product product){
         if(existsProduct(product)){
-            throw new ProductDuplicateException("Product already registered");
+            throw new ProductDuplicateException("The Product " + product.getName() + " is registered");
         }
     }
 
