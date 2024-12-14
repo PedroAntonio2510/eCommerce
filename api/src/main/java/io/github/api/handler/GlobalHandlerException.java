@@ -1,47 +1,49 @@
 package io.github.api.handler;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import io.github.api.exceptions.CustomAnswerError;
-import io.github.api.exceptions.CustomError;
-import io.github.api.exceptions.ProductDuplicateException;
+import io.github.api.exceptions.ObjectDuplicateException;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
+import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalHandlerException {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public CustomAnswerError handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-        List<FieldError> fieldErrorList = e.getFieldErrors();
-        List<CustomError> errorList = fieldErrorList
+    public ProblemDetail handleMethoArgumentNotValidException(MethodArgumentNotValidException ex) {
+        List<Map<String, String>> errors = ex.getFieldErrors()
                 .stream()
-                .map(fe -> new CustomError(
-                        fe.getField(),
-                        fe.getDefaultMessage()
-                )).collect(Collectors.toList());
-        return new CustomAnswerError(
-                "Validation error",
-                HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                errorList);
+                .map(
+                        fieldError -> Map.of(
+                                "field", fieldError.getField(),
+                                "message", fieldError.getDefaultMessage()
+                        )).toList();
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                "Validation Error"
+        );
+
+        problemDetail.setTitle("Validation Error");
+        problemDetail.setType(URI.create("http://localhost:8080/errors/validation"));
+        problemDetail.setProperty("errors", errors);
+
+        return problemDetail;
     }
 
-    @ExceptionHandler(ProductDuplicateException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public CustomAnswerError handleProductDuplicateException(ProductDuplicateException e){
-        return CustomAnswerError.conflict(e.getMessage());
+    @ExceptionHandler(ObjectDuplicateException.class)
+    public ProblemDetail handleProductDuplicateException(ObjectDuplicateException ex) {
+        String details = ex.getMessage();
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, details);
+        problemDetail.setTitle("Product alredy registered");
+        problemDetail.setType(URI.create("http://localhost:8080/errors/duplicate"));
+        return problemDetail;
     }
 
-    @ExceptionHandler(JsonParseException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public CustomAnswerError handleJsonParseException(JsonParseException e) {
-        return CustomAnswerError.defaultAnswer(e.getMessage());
-    }
+
+
 }

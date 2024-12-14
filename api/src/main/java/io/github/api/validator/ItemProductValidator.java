@@ -1,10 +1,8 @@
 package io.github.api.validator;
 
 import io.github.api.domain.ItemProduct;
-import io.github.api.domain.Product;
-import io.github.api.exceptions.ProductDuplicateException;
+import io.github.api.exceptions.ObjectDuplicateException;
 import io.github.api.repositories.ItemProductRepositoy;
-import io.github.api.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +16,9 @@ public class ItemProductValidator {
 
     public void validate(ItemProduct itemProduct){
         if(existsItemProduct(itemProduct)){
-            throw new ProductDuplicateException("The product " + itemProduct.getProduct().getName() + " is registered");
+            throw new ObjectDuplicateException("The product "
+                    + itemProduct.getProduct().getName() +
+                    " is registered on the database");
         }
     }
 
