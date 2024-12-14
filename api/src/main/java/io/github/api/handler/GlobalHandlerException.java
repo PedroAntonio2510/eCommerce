@@ -20,8 +20,8 @@ public class GlobalHandlerException {
                 .stream()
                 .map(
                         fieldError -> Map.of(
-                                "field", fieldError.getField(),
-                                "message", fieldError.getDefaultMessage()
+                                "message", fieldError.getDefaultMessage(),
+                                "field", fieldError.getField()
                         )).toList();
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.UNPROCESSABLE_ENTITY,
