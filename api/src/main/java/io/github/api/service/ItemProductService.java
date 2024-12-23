@@ -1,7 +1,6 @@
 package io.github.api.service;
 
 import io.github.api.domain.ItemProduct;
-import io.github.api.domain.dto.ItemProductResponseDTO;
 import io.github.api.repositories.ItemProductRepositoy;
 import io.github.api.validator.ItemProductValidator;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +23,6 @@ public class ItemProductService {
     public List<ItemProduct> getAllItens() {
         return repositoy.findAll();
     }
+
 
 }

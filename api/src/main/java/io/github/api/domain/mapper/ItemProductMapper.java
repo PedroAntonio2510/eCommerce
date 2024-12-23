@@ -20,5 +20,6 @@ public abstract class ItemProductMapper {
     public abstract ItemProduct toEntity(ItemProductRequestDTO dto);
 
     @Mapping(target = "productName", source = "product.name")
+    @Mapping(target = "productPrice", source = "product.price")
     public abstract ItemProductResponseDTO toDTO(ItemProduct itemProduct);
 }
