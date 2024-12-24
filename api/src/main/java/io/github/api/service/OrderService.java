@@ -1,6 +1,7 @@
 package io.github.api.service;
 
 import io.github.api.domain.Order;
+import io.github.api.domain.enums.OrderStatus;
 import io.github.api.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class OrderService {
                                 .sum();
         order.setTotal(total);
         order.setQuantity(totalQuantity);
-
+        order.setStatus(OrderStatus.PENDING);
 
         return orderRepository.save(order);
 
