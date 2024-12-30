@@ -24,6 +24,6 @@ spring:
 
 rabbitmq:
   order:
-    exchange: ${order.exchange}
+    exchange: ${order-notification.exchange}
     queue-created: ${order.created.queue}
     queue-update: ${order.update.queue}

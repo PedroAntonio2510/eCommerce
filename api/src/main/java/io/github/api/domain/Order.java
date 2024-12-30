@@ -1,5 +1,6 @@
 package io.github.api.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.github.api.domain.enums.OrderPayment;
 import io.github.api.domain.enums.OrderStatus;
 import jakarta.persistence.*;
@@ -28,6 +29,7 @@ public class Order {
     private String id;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<ItemProduct> itens;
 
     private Integer quantity;

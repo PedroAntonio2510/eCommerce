@@ -26,7 +26,6 @@ public class RabbitMQConfiguration {
     @Value("${rabbitmq.order.queue-update}")
     private String orderUpdatedQueue;
 
-
     // Create the queues
     @Bean
     public Queue orderCreatedQueue() {

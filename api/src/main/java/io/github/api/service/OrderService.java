@@ -5,6 +5,7 @@ import io.github.api.domain.enums.OrderStatus;
 import io.github.api.repositories.OrderRepository;
 import io.github.api.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,7 +17,10 @@ import java.util.Optional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final ProductRepository productRepository;
+    private final RabbitMqNotificationService notificationService;
+
+    @Value("${rabbitmq.order.exchange}")
+    private String orderNotificationExchange;
 
     public Order saveOrder(Order order){
 
@@ -40,7 +44,11 @@ public class OrderService {
         order.setQuantity(totalQuantity);
         order.setStatus(OrderStatus.PENDING);
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        notificationService.notificateOrderCreated(savedOrder, orderNotificationExchange);
+
+        return savedOrder;
 
     }
 
