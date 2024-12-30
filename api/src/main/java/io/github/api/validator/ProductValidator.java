@@ -1,7 +1,7 @@
 package io.github.api.validator;
 
 import io.github.api.domain.Product;
-import io.github.api.exceptions.ObjectDuplicateException;
+import io.github.api.domain.exceptions.ObjectDuplicateException;
 import io.github.api.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

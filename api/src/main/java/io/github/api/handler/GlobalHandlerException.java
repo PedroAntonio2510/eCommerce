@@ -1,6 +1,6 @@
 package io.github.api.handler;
 
-import io.github.api.exceptions.ObjectDuplicateException;
+import io.github.api.domain.exceptions.ObjectDuplicateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -44,6 +44,15 @@ public class GlobalHandlerException {
         return problemDetail;
     }
 
-
+    @ExceptionHandler(NullPointerException.class)
+    public ProblemDetail handleNullPointerException(NullPointerException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "The product id/quantity is null or doesn`t exists"
+        );
+        problemDetail.setTitle("Null Pointer Exception");
+        problemDetail.setType(URI.create("http://localhost:8080/errors/null-pointer"));
+        return problemDetail;
+    }
 
 }

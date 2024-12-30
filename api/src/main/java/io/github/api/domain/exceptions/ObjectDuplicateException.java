@@ -1,4 +1,4 @@
-package io.github.api.exceptions;
+package io.github.api.domain.exceptions;
 
 public class ObjectDuplicateException extends RuntimeException{
 
