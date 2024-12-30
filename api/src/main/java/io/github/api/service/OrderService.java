@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,5 +46,16 @@ public class OrderService {
 
     public List<Order> listOrder() {
         return orderRepository.findAll();
+    }
+
+    public Order updateOrder(Order order) {
+        if (order.getId() == null) {
+            throw new IllegalArgumentException("The order doesnt exists");
+        }
+        return orderRepository.save(order);
+    }
+
+    public Optional<Order> getOrderById(String id) {
+        return orderRepository.findById(id);
     }
 }
