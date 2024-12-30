@@ -4,6 +4,7 @@ import io.github.api.domain.Order;
 import io.github.api.domain.dto.OrderRequestDTO;
 import io.github.api.domain.dto.OrderResponseDTO;
 import io.github.api.domain.dto.OrderUpdatePaymentDTO;
+import io.github.api.domain.dto.OrderUpdateStatusDTO;
 import io.github.api.domain.mapper.OrderMapper;
 import io.github.api.service.OrderService;
 import jakarta.validation.Valid;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.function.Function;
 
 @RestController
 @RequestMapping("/order")
@@ -42,7 +42,8 @@ public class OrderController implements GenericController{
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUserPaymentOrder(@PathVariable String id, @RequestBody @Valid OrderUpdatePaymentDTO request) {
+    public ResponseEntity<?> updateUserPaymentOrder(@PathVariable String id,
+                                                    @RequestBody @Valid OrderUpdatePaymentDTO request) {
         return service.getOrderById(id)
                 .map(order -> {
                     OrderRequestDTO newOrder = orderMapper.toUpdatePayment(request);
@@ -53,4 +54,20 @@ public class OrderController implements GenericController{
                     return ResponseEntity.noContent().build();
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @PutMapping("/status/{id}")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable String id,
+                                               @RequestBody OrderUpdateStatusDTO request){
+        return service.getOrderById(id)
+                .map(order -> {
+                    Order newOrder = orderMapper.toUpdateStatus(request);
+                    order.setStatus(newOrder.getStatus());
+
+                    service.updateOrder(order);
+
+                    return ResponseEntity.noContent().build();
+                }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+
 }

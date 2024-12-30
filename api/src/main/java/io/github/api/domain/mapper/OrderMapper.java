@@ -4,6 +4,7 @@ import io.github.api.domain.Order;
 import io.github.api.domain.dto.OrderRequestDTO;
 import io.github.api.domain.dto.OrderResponseDTO;
 import io.github.api.domain.dto.OrderUpdatePaymentDTO;
+import io.github.api.domain.dto.OrderUpdateStatusDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = ItemProductMapper.class)
@@ -14,5 +15,7 @@ public interface OrderMapper {
     OrderResponseDTO toResponseDTO(Order order);
 
     OrderRequestDTO toUpdatePayment(OrderUpdatePaymentDTO dto);
+
+    Order toUpdateStatus(OrderUpdateStatusDTO dto);
 
 }
