@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/order")
@@ -36,7 +37,8 @@ public class OrderController implements GenericController{
 
         var resultList = service.listOrder();
 
-        List<OrderResponseDTO> orderList = resultList.stream().map(orderMapper::toResponseDTO).toList();
+        List<OrderResponseDTO> orderList = resultList.stream()
+                .map(orderMapper::toResponseDTO).collect(Collectors.toList());
 
         return ResponseEntity.ok(orderList);
     }
