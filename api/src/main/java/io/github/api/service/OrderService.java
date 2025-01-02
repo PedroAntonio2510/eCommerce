@@ -4,7 +4,6 @@ import io.github.api.domain.Order;
 import io.github.api.domain.enums.OrderStatus;
 import io.github.api.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final RabbitMqNotificationService notificationService;
-    private final Exchange exchange;
 
     @Value("${rabbitmq.order.exchange}")
     private String orderNotificationExchange;
@@ -59,7 +57,7 @@ public class OrderService {
             return message;
         };
 
-        notificateRabbitMq(order, messagePostProcessor);
+        notifyRabbitMq(order, messagePostProcessor);
 
         return savedOrder;
 
@@ -73,16 +71,29 @@ public class OrderService {
         if (order.getId() == null) {
             throw new IllegalArgumentException("The order doesnt exists");
         }
-        return orderRepository.save(order);
+        Order orderUpdated = orderRepository.save(order);
+
+        notifyUpdateRabbitMq(orderUpdated);
+
+        return orderUpdated;
     }
 
     public Optional<Order> getOrderById(String id) {
         return orderRepository.findById(id);
     }
 
-    public void notificateRabbitMq(Order order, MessagePostProcessor messagePostProcessor) {
+    public void notifyRabbitMq(Order order, MessagePostProcessor messagePostProcessor) {
         try {
             notificationService.orderCreatedNotification(order, orderNotificationExchange, messagePostProcessor);
+        } catch (RuntimeException e) {
+            order.setIntegrity(false);
+            orderRepository.save(order);
+        }
+    }
+
+    public void notifyUpdateRabbitMq(Order order) {
+        try {
+            notificationService.orderUpdateNotification(order, orderNotificationExchange);
         } catch (RuntimeException e) {
             order.setIntegrity(false);
             orderRepository.save(order);

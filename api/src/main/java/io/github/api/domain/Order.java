@@ -28,7 +28,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<ItemProduct> itens;
 
@@ -50,5 +50,6 @@ public class Order {
     private OrderStatus status;
 
     private boolean integrity;
+
 
 }
