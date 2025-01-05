@@ -15,6 +15,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class OrderWithoutIntegrity {
 
+    // Quando possuir um pedido com integridade false,
+    // um pedido feito quando o rabbitMq nao esta funcionando,
+    // e quando voltar a funcionar ele notifica as filas e atualiza os pedidos
+
     private final OrderRepository orderRepository;
     private final RabbitMqNotificationService notificationService;
     private final String exchange;
@@ -33,7 +37,6 @@ public class OrderWithoutIntegrity {
     public void searchOrderWithoutIntegratity() {
         orderRepository.findAllByIntegrityIsFalse().stream().forEach(order -> {
             try {
-                logger.info("Tentando enviar pedido: {}", order);
                 notificationService.orderCreatedNotification(order, exchange);
                 updateOrder(order);
             } catch (RuntimeException ex) {

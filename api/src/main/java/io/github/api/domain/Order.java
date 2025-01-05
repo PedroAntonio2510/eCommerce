@@ -49,7 +49,10 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    private boolean integrity;
+    @ManyToOne
+    @JoinColumn(name = "id_userModel")
+    private UserModel user;
 
+    private boolean integrity;
 
 }

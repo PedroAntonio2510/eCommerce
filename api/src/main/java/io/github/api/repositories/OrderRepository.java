@@ -2,7 +2,6 @@ package io.github.api.repositories;
 
 import io.github.api.domain.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
