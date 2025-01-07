@@ -19,7 +19,7 @@ public class UserModelValidator {
     }
 
     private boolean existsUser(UserModel userModel) {
-        Optional<UserModel> userFound = repository
+        UserModel userFound = repository
                 .findByCpf(userModel.getCpf());
         if  (userModel.getId() == null) {
             return userFound.isPresent();

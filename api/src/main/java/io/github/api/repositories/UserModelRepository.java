@@ -9,5 +9,4 @@ import java.util.Optional;
 public interface UserModelRepository extends JpaRepository<UserModel, String> {
     Optional<UserModel> findByCpf(@CPF String cpf);
 
-    void deleteByCpf(@CPF String cpf);
 }
