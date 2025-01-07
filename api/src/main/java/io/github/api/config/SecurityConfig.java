@@ -27,6 +27,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(withDefaults())
+                .httpBasic(withDefaults())
                 .authorizeHttpRequests(authorize -> {
 
                     authorize.requestMatchers(HttpMethod.POST, "/user/**").permitAll();
