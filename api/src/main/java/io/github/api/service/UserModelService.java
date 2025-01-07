@@ -37,6 +37,10 @@ public class UserModelService {
         repository.deleteById(id);
     }
 
+    public UserModel getByLogin(String login) {
+        return repository.findByLogin(login);
+    }
+
     public Optional<UserModel> getByCpf(String cpf) {
         return repository.findByCpf(cpf);
     }
