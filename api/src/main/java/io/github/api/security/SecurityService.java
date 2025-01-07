@@ -1,4 +1,4 @@
-package security;
+package io.github.api.security;
 
 import io.github.api.domain.UserModel;
 import io.github.api.service.UserModelService;
@@ -15,6 +15,7 @@ public class SecurityService {
 
     public UserModel getUserLogged() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         if (authentication instanceof CustomAuthentication customAuthentication){
             return customAuthentication.getUserModel();
         }

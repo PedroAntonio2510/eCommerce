@@ -1,4 +1,4 @@
-package security;
+package io.github.api.security;
 
 import io.github.api.domain.UserModel;
 import io.github.api.service.UserModelService;

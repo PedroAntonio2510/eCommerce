@@ -50,7 +50,7 @@ public class Order {
     private OrderStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "id_userModel")
+    @JoinColumn(name = "id_user_model")
     private UserModel user;
 
     private boolean integrity;

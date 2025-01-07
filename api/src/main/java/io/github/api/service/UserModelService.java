@@ -18,7 +18,6 @@ public class UserModelService {
     private final UserModelValidator validator;
     private final PasswordEncoder encoder;
 
-
     public UserModel createUser(UserModel userModel){
         validator.validate(userModel);
         userModel.setRoles(List.of("USER"));

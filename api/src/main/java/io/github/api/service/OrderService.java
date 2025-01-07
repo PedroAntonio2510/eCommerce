@@ -1,8 +1,10 @@
 package io.github.api.service;
 
 import io.github.api.domain.Order;
+import io.github.api.domain.UserModel;
 import io.github.api.domain.enums.OrderStatus;
 import io.github.api.repositories.OrderRepository;
+import io.github.api.security.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,12 +20,16 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final RabbitMqNotificationService notificationService;
+    private final SecurityService securityService;
 
     @Value("${rabbitmq.order.exchange}")
     private String orderNotificationExchange;
 
     public Order saveOrder(Order order){
-
+        UserModel user = securityService.getUserLogged();
+        if (user == null) {
+            throw new IllegalStateException("No user is logged in");
+        }
         // Mapear os itens do pedido
         order.getItens().forEach(item -> {
             item.setOrder(order);
@@ -43,7 +49,7 @@ public class OrderService {
         order.setTotal(total);
         order.setQuantity(totalQuantity);
         order.setStatus(OrderStatus.PENDING);
-
+        order.setUser(user);
 
         Order savedOrder = orderRepository.save(order);
 
@@ -64,7 +70,11 @@ public class OrderService {
     }
 
     public List<Order> listOrder() {
-        return orderRepository.findAll();
+        UserModel user = securityService.getUserLogged();
+        if (user != null) {
+            return orderRepository.findByUserLogin(user.getLogin());
+        }
+        return List.of();
     }
 
     public Order updateOrder(Order order) {
