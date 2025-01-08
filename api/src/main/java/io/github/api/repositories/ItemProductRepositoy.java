@@ -8,9 +8,4 @@ import java.util.Optional;
 
 public interface ItemProductRepositoy extends JpaRepository<ItemProduct, String> {
 
-    Optional<ItemProduct> findItemProductByProduct_Id(String id);
-
-    Optional<Object> findItemProductById(String id);
-    
-    void deleteAllById(String id);
 }

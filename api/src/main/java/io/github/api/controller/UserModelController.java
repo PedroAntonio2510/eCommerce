@@ -7,6 +7,7 @@ import io.github.api.service.UserModelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -36,11 +37,12 @@ public class UserModelController implements GenericController {
         return ResponseEntity.created(uri).build();
     }
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<?> deleteUser(@PathVariable String id) {
-//        Optional<UserModel> userFound = service.getById(id);
-//        service.deleteUser(userFound.get());
-//        return ResponseEntity.noContent().build();
-//    }
+    @PreAuthorize("hasAnyRole('USER', 'MANAGER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
+        Optional<UserModel> userFound = service.getById(id);
+        service.deleteUser(userFound.get().getId());
+        return ResponseEntity.noContent().build();
+    }
 
 }
