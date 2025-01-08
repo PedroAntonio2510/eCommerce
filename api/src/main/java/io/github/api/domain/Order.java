@@ -35,7 +35,7 @@ public class Order {
     private Integer quantity;
 
     @CreatedDate
-    private LocalDateTime orderDate;
+    private LocalDate orderDate;
 
     @LastModifiedDate
     private LocalDate lastUpdate;

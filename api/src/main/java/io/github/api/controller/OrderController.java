@@ -10,6 +10,7 @@ import io.github.api.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,6 +25,7 @@ public class OrderController implements GenericController{
     private final OrderService service;
     private final OrderMapper orderMapper;
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
     public ResponseEntity<OrderResponseDTO> save(@RequestBody @Valid OrderRequestDTO dto) {
         Order order = orderMapper.toEntity(dto);
@@ -43,6 +45,7 @@ public class OrderController implements GenericController{
         return ResponseEntity.ok(orderList);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUserPaymentOrder(@PathVariable String id,
                                                     @RequestBody @Valid OrderUpdatePaymentDTO request) {
@@ -57,6 +60,7 @@ public class OrderController implements GenericController{
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/status/{id}")
     public ResponseEntity<?> updateOrderStatus(@PathVariable String id,
                                                @RequestBody OrderUpdateStatusDTO request){

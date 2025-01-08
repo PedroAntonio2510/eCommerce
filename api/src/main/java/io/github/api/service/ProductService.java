@@ -1,6 +1,7 @@
 package io.github.api.service;
 
 import io.github.api.domain.Product;
+import io.github.api.repositories.ItemProductRepositoy;
 import io.github.api.repositories.ProductRepository;
 import io.github.api.repositories.specs.ProductSpecs;
 import io.github.api.validator.ProductValidator;
@@ -17,15 +18,16 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository repository;
+    private final ItemProductRepositoy itemProductRepositoy;
     private final ProductValidator validator;
 
-    public Product saveProduct(Product product){
+    public Product saveProduct(Product product) {
         validator.validate(product);
         return repository.save(product);
     }
 
-    public Optional<Product> getProductById(String id){
-        if (id.isEmpty() || id == null){
+    public Optional<Product> getProductById(String id) {
+        if (id.isEmpty() || id == null) {
             throw new IllegalArgumentException("The id isn't valid");
         }
         return repository.findById(id);
@@ -33,22 +35,22 @@ public class ProductService {
 
 
     public List<Product> searchProducts(String name,
-                                        BigDecimal price){
+                                        BigDecimal price) {
         Specification<Product> specs = Specification.where(
                 (root, query, cb) -> cb.conjunction()
         );
-        if (name != null){
+        if (name != null) {
             specs = specs.and(ProductSpecs.nameLike(name));
         }
-        if (price != null){
+        if (price != null) {
             specs = specs.and(ProductSpecs.priceLessThan(price));
         }
         return repository.findAll(specs);
     }
 
-    public void deleteProduct(Product product) {
-        repository.delete(product);
+    public void deleteProduct(String id) {
+        repository.deleteById(id);
     }
-
-
 }
+
+

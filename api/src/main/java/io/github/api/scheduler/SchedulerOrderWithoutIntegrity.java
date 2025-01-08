@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class OrderWithoutIntegrity {
+public class SchedulerOrderWithoutIntegrity {
 
     // Quando possuir um pedido com integridade false,
     // um pedido feito quando o rabbitMq nao esta funcionando,
@@ -22,11 +22,11 @@ public class OrderWithoutIntegrity {
     private final OrderRepository orderRepository;
     private final RabbitMqNotificationService notificationService;
     private final String exchange;
-    private final Logger logger = LoggerFactory.getLogger(OrderWithoutIntegrity.class);
+    private final Logger logger = LoggerFactory.getLogger(SchedulerOrderWithoutIntegrity.class);
 
-    public OrderWithoutIntegrity(OrderRepository orderRepository,
-                                 RabbitMqNotificationService notificationService,
-                                 @Value("${rabbitmq.order.exchange}") String exchange) {
+    public SchedulerOrderWithoutIntegrity(OrderRepository orderRepository,
+                                          RabbitMqNotificationService notificationService,
+                                          @Value("${rabbitmq.order.exchange}") String exchange) {
         this.orderRepository = orderRepository;
         this.notificationService = notificationService;
         this.exchange = exchange;

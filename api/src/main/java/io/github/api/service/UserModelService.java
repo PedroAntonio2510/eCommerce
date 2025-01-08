@@ -28,6 +28,7 @@ public class UserModelService {
 
     public UserModel createAdminUser(UserModel userModel) {
         validator.validate(userModel);
+        userModel.setRoles(List.of("MANAGER"));
         userModel.setPassword(encoder.encode(userModel.getPassword()));
         return repository.save(userModel);
     }
@@ -42,5 +43,9 @@ public class UserModelService {
 
     public Optional<UserModel> getByCpf(String cpf) {
         return repository.findByCpf(cpf);
+    }
+
+    public Optional<UserModel> getById(String id) {
+        return repository.findById(id);
     }
 }

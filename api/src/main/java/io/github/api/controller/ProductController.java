@@ -3,10 +3,12 @@ package io.github.api.controller;
 import io.github.api.domain.Product;
 import io.github.api.domain.dto.ProductRequestDTO;
 import io.github.api.domain.mapper.ProductMapper;
+import io.github.api.repositories.ItemProductRepositoy;
 import io.github.api.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -22,6 +24,7 @@ public class ProductController implements GenericController{
     private final ProductService service;
     private final ProductMapper productMapper;
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping
     public ResponseEntity<?> save(@RequestBody @Valid ProductRequestDTO dto){
         Product product = productMapper.toEntity(dto);
@@ -30,6 +33,7 @@ public class ProductController implements GenericController{
         return ResponseEntity.created(uri).build();
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'USER')")
     @GetMapping
     public ResponseEntity<List<Product>> search(
             @RequestParam(required = false) String name,
@@ -39,6 +43,7 @@ public class ProductController implements GenericController{
         return ResponseEntity.ok(productList);
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable String id, @RequestBody ProductRequestDTO dto){
         return service.getProductById(id)
@@ -53,10 +58,11 @@ public class ProductController implements GenericController{
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable String id){
         Optional<Product> productOptional = service.getProductById(id);
-        service.deleteProduct(productOptional.get());
+        service.deleteProduct(productOptional.get().getId());
         return ResponseEntity.noContent().build();
     }
 

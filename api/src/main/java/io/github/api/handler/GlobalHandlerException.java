@@ -5,6 +5,7 @@ import io.github.api.domain.exceptions.ObjectDuplicateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -67,6 +68,18 @@ public class GlobalHandlerException {
         problemDetail.setTitle("Json Parse Error");
         problemDetail.setType(URI.create("http://localhost:8080/errors/messagenotreadable"));
         problemDetail.setProperty("message", "There isn`t a valid payment method");
+        return problemDetail;
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ProblemDetail handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                "Login or Password are invalid"
+        );
+        problemDetail.setTitle("Username Not Found");
+        problemDetail.setType(URI.create("http://localhost:8080/erros/usernameNotFound"));
+        problemDetail.setProperty("message", "The login or password are invalid ");
         return problemDetail;
     }
 
