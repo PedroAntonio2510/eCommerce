@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.br.CPF;
 
 import java.util.List;
 
-public record UserModelRequestDTO(
+public record UserRequestDTO(
         @NotBlank(message = "You must have a login name")
         String login,
 
@@ -17,17 +17,13 @@ public record UserModelRequestDTO(
         @NotBlank(message = "you must provide a password")
         String password,
 
-        @NotBlank(message = "You must provide a nme")
         String name,
 
-        @NotBlank(message = "you must provide a last name")
         String lastName,
 
-        @NotBlank(message = "You must provide a phone number")
         String phoneNumber,
 
         @CPF
-        @NotBlank(message = "you must provide a cpf")
         String cpf,
 
         List<String> roles

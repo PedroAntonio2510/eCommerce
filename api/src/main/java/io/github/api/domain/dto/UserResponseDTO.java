@@ -1,9 +1,10 @@
 package io.github.api.domain.dto;
 
-public record UserModelResponseDTO(
+public record UserResponseDTO(
         String name,
         String lastName,
         String phoneNumber,
-        String cpf
+        String cpf,
+        String email
 ) {
 }

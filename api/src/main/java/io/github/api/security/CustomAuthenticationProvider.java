@@ -1,7 +1,7 @@
 package io.github.api.security;
 
-import io.github.api.domain.UserModel;
-import io.github.api.service.UserModelService;
+import io.github.api.domain.User;
+import io.github.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-    private final UserModelService userModelService;
+    private final UserService userService;
     private final PasswordEncoder encoder;
 
     @Override
@@ -23,10 +23,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String login = authentication.getName();
         String incomePassword = authentication.getCredentials().toString();
 
-        UserModel userFound = userModelService.getByLogin(login);
+        User userFound = userService.getByLogin(login);
 
         if (userFound == null) {
-            throw new UsernameNotFoundException("login or password ar incorrect");
+            throw new UsernameNotFoundException("login and/or password incorrect");
         }
 
         String encryptedPassword = userFound.getPassword();

@@ -1,9 +1,3 @@
-#spring.application.name=api
-#spring.datasource.url=jdbc:postgresql://localhost:5432/ecommerceapiDB
-#spring.datasource.username=postgres
-#spring.datasource.password=postgres
-#spring.jpa.show-sql=true
-#spring.jpa.hibernate.ddl-auto=update
 spring:
   application:
     name: api
@@ -16,29 +10,36 @@ spring:
     password: ${postgres.password}
     driver-class-name: org.postgresql.Driver
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: update
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
   rabbitmq:
     host: localhost
     port: 5672
     username: ${rabbit.username}
     password: ${rabbit.password}
 
-logging:
-  pattern:
-    console: '%clr(%d{dd-MM-yyyy HH:mm:ss}){faint} %clr(%5p) %clr([%t]){faint} %clr(%-40.40logger){cyan} %clr(:){yellow} %m%n'
-  file:
-    name: app.log
-  level:
-    root: error
-    io:
-      github:
-        springJpa: trace
-    org:
-      springframework:
-        web: debug
-        security: trace
+#logging:
+#  pattern:
+#    console: '%clr(%d{dd-MM-yyyy HH:mm:ss}){faint} %clr(%5p) %clr([%t]){faint} %clr(%-40.40logger){cyan} %clr(:){yellow} %m%n'
+#  file:
+#    name: app.log
+#  level:
+#    root: error
+#    io:
+#      github:
+#        springJpa: trace
+#    org:
+#      springframework:
+#        web: debug
+#        security: trace
 
 rabbitmq:
   order:

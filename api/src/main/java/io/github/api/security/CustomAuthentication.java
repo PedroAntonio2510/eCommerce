@@ -1,6 +1,6 @@
 package io.github.api.security;
 
-import io.github.api.domain.UserModel;
+import io.github.api.domain.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -10,15 +10,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-@Getter
 @RequiredArgsConstructor
+@Getter
 public class CustomAuthentication implements Authentication {
 
-    private final UserModel userModel;
+    private final User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.userModel
+        return this.user
                 .getRoles()
                 .stream()
                 .map(SimpleGrantedAuthority::new)
@@ -32,12 +32,12 @@ public class CustomAuthentication implements Authentication {
 
     @Override
     public Object getDetails() {
-        return userModel;
+        return user;
     }
 
     @Override
     public Object getPrincipal() {
-        return userModel;
+        return user;
     }
 
     @Override
@@ -52,6 +52,6 @@ public class CustomAuthentication implements Authentication {
 
     @Override
     public String getName() {
-        return userModel.getLogin();
+        return user.getLogin();
     }
 }

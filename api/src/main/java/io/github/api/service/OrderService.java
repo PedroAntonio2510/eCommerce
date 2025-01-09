@@ -1,7 +1,7 @@
 package io.github.api.service;
 
 import io.github.api.domain.Order;
-import io.github.api.domain.UserModel;
+import io.github.api.domain.User;
 import io.github.api.domain.enums.OrderStatus;
 import io.github.api.repositories.OrderRepository;
 import io.github.api.security.SecurityService;
@@ -26,7 +26,7 @@ public class OrderService {
     private String orderNotificationExchange;
 
     public Order saveOrder(Order order){
-        UserModel user = securityService.getUserLogged();
+        User user = securityService.getUserLogged();
         if (user == null) {
             throw new IllegalStateException("No user is logged in");
         }
@@ -70,9 +70,9 @@ public class OrderService {
     }
 
     public List<Order> listOrder() {
-        UserModel user = securityService.getUserLogged();
+        User user = securityService.getUserLogged();
         if (user != null) {
-            return orderRepository.findByUserLogin(user.getLogin());
+            return orderRepository.findByUserEmail(user.getEmail());
         }
         return List.of();
     }

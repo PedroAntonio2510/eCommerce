@@ -1,14 +1,14 @@
 package io.github.api.domain.mapper;
 
-import io.github.api.domain.UserModel;
-import io.github.api.domain.dto.UserModelRequestDTO;
-import io.github.api.domain.dto.UserModelResponseDTO;
+import io.github.api.domain.User;
+import io.github.api.domain.dto.UserRequestDTO;
+import io.github.api.domain.dto.UserResponseDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface UserModelMapper {
 
-    UserModel toEntity(UserModelRequestDTO dto);
+    User toEntity(UserRequestDTO dto);
 
-    UserModelResponseDTO toDTO(UserModel userModel);
+    UserResponseDTO toDTO(User user);
 }
