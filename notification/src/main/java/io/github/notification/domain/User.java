@@ -1,13 +1,11 @@
 package io.github.notification.domain;
 
-import org.springframework.cglib.core.Local;
+import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
-
-public class UserModel {
+public class User {
 
     private String id;
 

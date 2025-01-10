@@ -6,7 +6,6 @@ import io.github.notification.domain.enums.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class Order {
@@ -27,7 +26,7 @@ public class Order {
 
     private OrderStatus status;
 
-    private UserModel user;
+    private User user;
 
     private boolean integrity;
 
@@ -59,7 +58,7 @@ public class Order {
         return status;
     }
 
-    public UserModel getUser() {
+    public User getUser() {
         return user;
     }
 
@@ -103,7 +102,7 @@ public class Order {
         this.status = status;
     }
 
-    public void setUser(UserModel user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
