@@ -23,4 +23,5 @@ public class RabbitMqNotificationService {
     public void orderUpdateNotification(Order order, String exchange) {
         rabbitTemplate.convertAndSend(exchange, "order-update", order);
     }
+
 }

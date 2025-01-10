@@ -15,12 +15,12 @@ public class UserValidator {
     private final UserModelRepository repository;
 
     public void validate(User user) {
-        if (existsUserWithEmail(user)) {
-            throw new ObjectDuplicateException("User already registered");
+        if (existsUserWithCPf(user)) {
+            throw new ObjectDuplicateException("This user have a registry with this CPF");
         }
     }
 
-    private boolean existsUserWithEmail(User user) {
+    private boolean existsUserWithCPf(User user) {
         Optional<User> userFound = repository
                 .findByCpf(user.getCpf());
         if  (user.getEmail() == null) {
@@ -31,4 +31,5 @@ public class UserValidator {
                 .stream()
                 .anyMatch(id -> !id.equals(user.getId()));
     }
+
 }
