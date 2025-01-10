@@ -1,6 +1,6 @@
 package io.github.api.handler;
 
-import com.fasterxml.jackson.core.JsonParseException;
+import io.github.api.domain.exceptions.AcessDeniedException;
 import io.github.api.domain.exceptions.ObjectDuplicateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 
 import java.net.URI;
 import java.util.List;
@@ -43,13 +42,12 @@ public class GlobalHandlerException {
     public ProblemDetail handleProductDuplicateException(ObjectDuplicateException ex) {
         String details = ex.getMessage();
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, details);
-        problemDetail.setTitle("Product alredy registered");
         problemDetail.setType(URI.create("http://localhost:8080/errors/duplicate"));
         return problemDetail;
     }
 
     @ExceptionHandler(NullPointerException.class)
-    public ProblemDetail handleNullPointerException(NullPointerException ex) {
+    public ProblemDetail handleNullPointerException() {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "The product id/quantity is null or doesn`t exists"
@@ -60,7 +58,7 @@ public class GlobalHandlerException {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ProblemDetail handleJsonParseException(HttpMessageNotReadableException ex) {
+    public ProblemDetail handleJsonParseException() {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.BAD_REQUEST,
                 "Invalid payment type"
@@ -73,13 +71,38 @@ public class GlobalHandlerException {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ProblemDetail handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        String details = ex.getMessage();
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.NOT_FOUND,
-                "Login or Password are invalid"
+                details
         );
         problemDetail.setTitle("Username Not Found");
         problemDetail.setType(URI.create("http://localhost:8080/erros/usernameNotFound"));
         problemDetail.setProperty("message", "The login or password are invalid ");
+        return problemDetail;
+    }
+
+    @ExceptionHandler(AcessDeniedException.class)
+    public ProblemDetail handleAcessDeniedException() {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.FORBIDDEN,
+                "Acess denied"
+        );
+        problemDetail.setTitle("Acess Denied");
+        problemDetail.setType(URI.create("http://localhost:8080/errors/acessDenied"));
+        problemDetail.setProperty("message", "You don`t have acess to this resource");
+        return problemDetail;
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ProblemDetail handleRuntimeException() {
+        ProblemDetail problemDetail= ProblemDetail.forStatusAndDetail(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "An unexpect error ocorreded. Please try again later"
+        );
+        problemDetail.setTitle("Server error");
+        problemDetail.setType(URI.create("http://localhost:8080/errors/runtime"));
+        problemDetail.setProperty("message", "An unexpect error ocorreded. Please try again later");
         return problemDetail;
     }
 
