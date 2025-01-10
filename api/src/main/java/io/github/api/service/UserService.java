@@ -1,7 +1,7 @@
 package io.github.api.service;
 
 import io.github.api.domain.User;
-import io.github.api.repositories.UserModelRepository;
+import io.github.api.repositories.UserRepository;
 import io.github.api.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,15 +14,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserModelRepository repository;
+    private final UserRepository repository;
     private final UserValidator validator;
     private final PasswordEncoder encoder;
 
-    public User createUser(User user){
+    public User saveUser(User user){
         validator.validate(user);
         user.setRoles(List.of("USER"));
-        var password = user.getPassword();
-        user.setPassword(encoder.encode(password));
+        user.setPassword(encoder.encode(user.getPassword()));
+        return repository.save(user);
+    }
+
+    public User createOAuthUser(User user){
+        user.setRoles(List.of("USER"));
+        user.setPassword(encoder.encode(user.getPassword()));
         return repository.save(user);
     }
 
@@ -46,6 +51,9 @@ public class UserService {
     }
 
     public Optional<User> getById(String id) {
+        if (id.isEmpty() || id == null) {
+            throw new IllegalArgumentException("The id isn't valid");
+        }
         return repository.findById(id);
     }
 }

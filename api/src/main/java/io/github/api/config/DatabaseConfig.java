@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Configuration
-@RequiredArgsConstructor
 public class DatabaseConfig {
 
     @Value("${spring.datasource.username}")
@@ -24,7 +23,6 @@ public class DatabaseConfig {
 
     @Value("${spring.datasource.driver-class-name}")
     String driver;
-
 
     @Bean
     public DataSource hikariDataSource() {

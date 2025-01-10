@@ -16,8 +16,6 @@ public class LoginController {
     public String homePage(Authentication authentication) {
         if (authentication instanceof CustomAuthentication customAuth) {
             System.out.println(customAuth.getUser());
-        } else {
-            System.out.println("Nenhum usuario encontrado");
         }
         return "Olá " + authentication.getName();
     }

@@ -2,7 +2,7 @@ package io.github.api.validator;
 
 import io.github.api.domain.User;
 import io.github.api.domain.exceptions.ObjectDuplicateException;
-import io.github.api.repositories.UserModelRepository;
+import io.github.api.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserValidator {
 
-    private final UserModelRepository repository;
+    private final UserRepository repository;
 
     public void validate(User user) {
         if (existsUserWithCPf(user)) {

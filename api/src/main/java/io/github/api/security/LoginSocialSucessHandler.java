@@ -34,17 +34,18 @@ public class LoginSocialSucessHandler extends SavedRequestAwareAuthenticationSuc
         OAuth2User oAuth2User = auth2AuthenticationToken.getPrincipal();
 
         String email = oAuth2User.getAttribute("email");
-        System.out.println(email);
+        System.out.println("Email: " + email);
 
         User user = userService.getByEmail(email);
+        System.out.println("User from database: " + user);
 
         if (user == null) {
             user = registerUser(email);
         }
 
-        authentication = new CustomAuthentication(user);
+        CustomAuthentication customAuthentication = new CustomAuthentication(user);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(customAuthentication);
 
         super.onAuthenticationSuccess(request, response, authentication);
     }
@@ -57,7 +58,7 @@ public class LoginSocialSucessHandler extends SavedRequestAwareAuthenticationSuc
         user.setLogin(getLoginByEmail(email));
         user.setPassword(DefaultPassword);
 
-        userService.createUser(user);
+        userService.createOAuthUser(user);
         return user;
     }
 

@@ -6,7 +6,7 @@ import io.github.api.domain.dto.UserResponseDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface UserModelMapper {
+public interface UserMapper {
 
     User toEntity(UserRequestDTO dto);
 
