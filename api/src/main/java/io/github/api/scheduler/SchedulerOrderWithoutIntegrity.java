@@ -35,7 +35,7 @@ public class SchedulerOrderWithoutIntegrity {
     @Transactional
     @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
     public void searchOrderWithoutIntegratity() {
-        orderRepository.findAllByIntegrityIsFalse().stream().forEach(order -> {
+        orderRepository.findAllByIntegrityIsFalse().forEach(order -> {
             try {
                 notificationService.orderCreatedNotification(order, exchange);
                 updateOrder(order);

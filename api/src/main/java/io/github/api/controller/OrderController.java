@@ -34,6 +34,7 @@ public class OrderController implements GenericController{
         return ResponseEntity.created(uri).body(orderMapper.toResponseDTO(order));
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'MANAGER')")
     @GetMapping
     public ResponseEntity<List<OrderResponseDTO>> getOrders() {
 
