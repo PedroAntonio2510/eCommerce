@@ -18,6 +18,9 @@ public class UserValidator {
         if (existsUserWithCPf(user)) {
             throw new ObjectDuplicateException("This user have a registry with this CPF");
         }
+        if (existirUserWithEmail(user)) {
+            throw new ObjectDuplicateException("This user have a registry with this email");
+        }
     }
 
     private boolean existsUserWithCPf(User user) {
@@ -32,4 +35,8 @@ public class UserValidator {
                 .anyMatch(id -> !id.equals(user.getId()));
     }
 
+    private boolean existirUserWithEmail(User user) {
+        User userFound = repository.findByEmail(user.getEmail());
+        return userFound != null;
+    }
 }

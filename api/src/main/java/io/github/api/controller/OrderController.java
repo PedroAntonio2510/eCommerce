@@ -5,6 +5,7 @@ import io.github.api.domain.dto.OrderRequestDTO;
 import io.github.api.domain.dto.OrderResponseDTO;
 import io.github.api.domain.dto.OrderUpdatePaymentDTO;
 import io.github.api.domain.dto.OrderUpdateStatusDTO;
+import io.github.api.domain.enums.OrderStatus;
 import io.github.api.domain.mapper.OrderMapper;
 import io.github.api.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,9 +48,26 @@ public class OrderController implements GenericController{
 
     @PreAuthorize("hasAnyRole('USER', 'MANAGER')")
     @GetMapping
-    public ResponseEntity<List<OrderResponseDTO>> getOrders() {
+    public ResponseEntity<List<OrderResponseDTO>> getOrders(
+            @RequestParam(value = "days", required = false)
+            Integer days,
+            @RequestParam(value = "status", required = false)
+            OrderStatus status,
+            @RequestParam(value = "total", required = false)
+            BigDecimal total
+    ) {
 
-        var resultList = service.listOrder();
+        var resultList = service.listOrder(days, status, total);
+
+        List<OrderResponseDTO> orderList = resultList.stream()
+                .map(orderMapper::toResponseDTO).collect(Collectors.toList());
+
+        return ResponseEntity.ok(orderList);
+    }
+
+    @GetMapping("/last7days")
+    public ResponseEntity<List<OrderResponseDTO>> getOrdersFromLast7Days() {
+        var resultList = service.getOrdersFromLast7Days();
 
         List<OrderResponseDTO> orderList = resultList.stream()
                 .map(orderMapper::toResponseDTO).collect(Collectors.toList());
