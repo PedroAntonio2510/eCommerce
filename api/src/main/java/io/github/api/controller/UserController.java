@@ -4,6 +4,7 @@ import io.github.api.domain.User;
 import io.github.api.domain.dto.UserRequestDTO;
 import io.github.api.domain.mapper.UserMapper;
 import io.github.api.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
+@Tag(name = "User Controller")
 public class UserController implements GenericController {
 
     private final UserService service;

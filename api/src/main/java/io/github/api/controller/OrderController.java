@@ -7,6 +7,10 @@ import io.github.api.domain.dto.OrderUpdatePaymentDTO;
 import io.github.api.domain.dto.OrderUpdateStatusDTO;
 import io.github.api.domain.mapper.OrderMapper;
 import io.github.api.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +24,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/order")
 @RequiredArgsConstructor
+@Tag(name = "Order Controller")
 public class OrderController implements GenericController{
 
     private final OrderService service;
@@ -27,6 +32,11 @@ public class OrderController implements GenericController{
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping
+    @Operation(summary = "Make a order")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description =  "Order created successfully"),
+            @ApiResponse(responseCode = "422", description = "Invalid data")
+    })
     public ResponseEntity<OrderResponseDTO> save(@RequestBody @Valid OrderRequestDTO dto) {
         Order order = orderMapper.toEntity(dto);
         URI uri = headerLocation(order.getId());
