@@ -35,16 +35,9 @@ public class OrderService {
             item.setOrder(order);
         });
 
-        BigDecimal total = order.getItens().stream()
-                .map(item -> item.getProduct()
-                        .getPrice()
-                        .multiply(new BigDecimal(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal total = getTotal(order);
 
-        Integer totalQuantity = order.getItens()
-                .stream()
-                        .mapToInt(item -> item.getQuantity())
-                                .sum();
+        Integer totalQuantity = getTotalQuantity(order);
 
         order.setTotal(total);
         order.setQuantity(totalQuantity);
@@ -90,6 +83,23 @@ public class OrderService {
 
     public Optional<Order> getOrderById(String id) {
         return orderRepository.findById(id);
+    }
+
+    private BigDecimal getTotal(Order order) {
+        BigDecimal total = order.getItens().stream()
+                .map(item -> item.getProduct()
+                        .getPrice()
+                        .multiply(new BigDecimal(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return total;
+    }
+
+    private Integer getTotalQuantity(Order order) {
+        Integer totalQuantity = order.getItens()
+                .stream()
+                        .mapToInt(item -> item.getQuantity())
+                                .sum();
+        return totalQuantity;
     }
 
     public void notifyRabbitMq(Order order, MessagePostProcessor messagePostProcessor) {
