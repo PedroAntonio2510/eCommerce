@@ -5,6 +5,7 @@ import io.github.api.domain.dto.ProductRequestDTO;
 import io.github.api.domain.mapper.ProductMapper;
 import io.github.api.repositories.ItemProductRepositoy;
 import io.github.api.service.ProductService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
+@Tag(name = "Product Controller")
 public class ProductController implements GenericController{
 
     private final ProductService service;
