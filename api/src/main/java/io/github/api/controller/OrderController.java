@@ -14,14 +14,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/order")
@@ -48,29 +47,22 @@ public class OrderController implements GenericController{
 
     @PreAuthorize("hasAnyRole('USER', 'MANAGER')")
     @GetMapping
-    public ResponseEntity<List<OrderResponseDTO>> getOrders(
+    public ResponseEntity<Page<OrderResponseDTO>> getOrders(
             @RequestParam(value = "days", required = false)
             Integer days,
             @RequestParam(value = "status", required = false)
             OrderStatus status,
             @RequestParam(value = "total", required = false)
-            BigDecimal total
+            BigDecimal total,
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize
     ) {
 
-        var resultList = service.listOrder(days, status, total);
+        var resultList = service.listOrder(days, status, total, pageNo, pageSize);
 
-        List<OrderResponseDTO> orderList = resultList.stream()
-                .map(orderMapper::toResponseDTO).collect(Collectors.toList());
-
-        return ResponseEntity.ok(orderList);
-    }
-
-    @GetMapping("/last7days")
-    public ResponseEntity<List<OrderResponseDTO>> getOrdersFromLast7Days() {
-        var resultList = service.getOrdersFromLast7Days();
-
-        List<OrderResponseDTO> orderList = resultList.stream()
-                .map(orderMapper::toResponseDTO).collect(Collectors.toList());
+        Page<OrderResponseDTO> orderList = resultList.map(
+                orderMapper::toResponseDTO
+        );
 
         return ResponseEntity.ok(orderList);
     }

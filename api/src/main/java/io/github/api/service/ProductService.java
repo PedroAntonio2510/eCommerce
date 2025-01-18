@@ -1,16 +1,18 @@
 package io.github.api.service;
 
 import io.github.api.domain.Product;
-import io.github.api.repositories.ItemProductRepositoy;
+import io.github.api.repositories.OrderRepository;
 import io.github.api.repositories.ProductRepository;
 import io.github.api.repositories.specs.ProductSpecs;
 import io.github.api.validator.ProductValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,7 +20,7 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository repository;
-    private final ItemProductRepositoy itemProductRepositoy;
+    private final OrderRepository orderRepository;
     private final ProductValidator validator;
 
     public Product saveProduct(Product product) {
@@ -34,8 +36,10 @@ public class ProductService {
     }
 
 
-    public List<Product> searchProducts(String name,
-                                        BigDecimal price) {
+    public Page<Product> searchProducts(String name,
+                                        BigDecimal price,
+                                        int pageNo,
+                                        int pageSize) {
         Specification<Product> specs = Specification.where(
                 (root, query, cb) -> cb.conjunction()
         );
@@ -45,12 +49,14 @@ public class ProductService {
         if (price != null) {
             specs = specs.and(ProductSpecs.priceLessThan(price));
         }
-        return repository.findAll(specs);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return repository.findAll(specs, pageable);
     }
 
     public void deleteProduct(String id) {
         repository.deleteById(id);
     }
+
 }
 
 

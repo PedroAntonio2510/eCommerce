@@ -10,11 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,9 +71,11 @@ public class OrderService {
 
     }
 
-    public List<Order> listOrder(Integer days,
+    public Page<Order> listOrder(Integer days,
                                  OrderStatus status,
-                                 BigDecimal totalFMT) {
+                                 BigDecimal totalFMT,
+                                 int pageNo,
+                                 int pageSize) {
         User user = securityService.getUserLogged();
         if (user != null) {
             Specification<Order> specs = Specification.where((root, query, cb) -> cb.conjunction());
@@ -84,9 +88,10 @@ public class OrderService {
             if (totalFMT != null) {
                 specs = specs.and(totalLessThan(totalFMT));
             }
-            return orderRepository.findAll(specs.and(userEmailEqual(user.getEmail())));
+            Pageable pageable = PageRequest.of(pageNo, pageSize);
+            return orderRepository.findAll(specs.and(userEmailEqual(user.getEmail())), pageable);
         }
-        return List.of();
+        return Page.empty();
     }
 
     public List<Order> getOrdersFromLast7Days() {

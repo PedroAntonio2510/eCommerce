@@ -3,18 +3,17 @@ package io.github.api.controller;
 import io.github.api.domain.Product;
 import io.github.api.domain.dto.ProductRequestDTO;
 import io.github.api.domain.mapper.ProductMapper;
-import io.github.api.repositories.ItemProductRepositoy;
 import io.github.api.service.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -37,11 +36,13 @@ public class ProductController implements GenericController{
 
     @PreAuthorize("hasAnyRole('MANAGER', 'USER')")
     @GetMapping
-    public ResponseEntity<List<Product>> search(
+    public ResponseEntity<Page<Product>> search(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) BigDecimal price
+            @RequestParam(required = false) BigDecimal price,
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize
             ){
-        List<Product> productList = service.searchProducts(name, price);
+        Page<Product> productList = service.searchProducts(name, price, pageNo, pageSize);
         return ResponseEntity.ok(productList);
     }
 

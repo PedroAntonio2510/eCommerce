@@ -11,5 +11,4 @@ public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecif
     List<Order> findAllByIntegrityIsFalse();
 
     List<Order> findByUserEmail(String email);
-
 }
