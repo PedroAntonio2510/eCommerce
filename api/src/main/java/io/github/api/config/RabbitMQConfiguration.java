@@ -27,6 +27,9 @@ public class RabbitMQConfiguration {
     @Value("${rabbitmq.order.queue-update}")
     private String orderUpdatedQueue;
 
+    @Value("${rabbitmq.order.queue-complete}")
+    private String orderCompleteQueue;
+
     // Create the queues
     @Bean
     public Queue orderCreatedQueue() {
@@ -36,6 +39,11 @@ public class RabbitMQConfiguration {
     @Bean
     public Queue orderUpdatedQueue() {
         return new Queue(orderUpdatedQueue, true);
+    }
+
+    @Bean
+    public Queue orderCompleteQueue() {
+        return new Queue(orderCompleteQueue, true);
     }
 
     @Bean
@@ -56,6 +64,13 @@ public class RabbitMQConfiguration {
                                             Queue orderUpdatedQueue) {
         return BindingBuilder.bind(orderUpdatedQueue)
                 .to(orderExchange).with("order-update");
+    }
+
+    @Bean
+    public Binding bingindOrderCompleteQueue(DirectExchange orderExchange,
+                                             Queue orderCompleteQueue) {
+        return BindingBuilder.bind(orderCompleteQueue)
+                .to(orderExchange).with("order-complete");
     }
 
     @Bean

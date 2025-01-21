@@ -2,13 +2,11 @@ package io.github.api.repositories.specs;
 
 import io.github.api.domain.Order;
 import io.github.api.domain.enums.OrderStatus;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Slf4j
 public class OrderSpecs {
 
     public static Specification<Order> dateLessThan(Integer days) {
@@ -37,7 +35,7 @@ public class OrderSpecs {
     public static Specification<Order> createdWithinLastDays(Integer days) {
         LocalDate today = LocalDate.now();
         LocalDate pastDate = today.minusDays(days);
-        log.info("Filtrando pedidos de: " + pastDate + " até " + today);
+
         return (root, query, cb) -> cb.between(
                 root.get("orderDate"),
                 pastDate,
@@ -45,16 +43,6 @@ public class OrderSpecs {
         );
     }
 
-    public static Specification<Order> createdInLast7Days() {
-        LocalDate today = LocalDate.now();
-        LocalDate pastDate = today.minusDays(7);
-        log.info("Filtrando pedidos de: " + pastDate + " até " + today);
-        return (root, query, cb) -> cb.between(
-                root.get("orderDate"),
-                pastDate,
-                today
-        );
-    }
 
 
 //    public static Specification<Order> createdWithinLast30Days() {

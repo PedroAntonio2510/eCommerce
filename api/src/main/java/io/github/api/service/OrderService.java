@@ -4,10 +4,8 @@ import io.github.api.domain.Order;
 import io.github.api.domain.User;
 import io.github.api.domain.enums.OrderStatus;
 import io.github.api.repositories.OrderRepository;
-import io.github.api.repositories.specs.OrderSpecs;
 import io.github.api.security.SecurityService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -17,14 +15,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 import static io.github.api.repositories.specs.OrderSpecs.*;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -33,6 +29,15 @@ public class OrderService {
 
     @Value("${rabbitmq.order.exchange}")
     private String orderNotificationExchange;
+
+    @Value("order-crated")
+    private String routingOrderCreated;
+
+    @Value("order-update")
+    private String routingOrderUpdate;
+
+    @Value("order-complete")
+    private String routingOrderComplete;
 
     public Order saveOrder(Order order) {
         User user = securityService.getUserLogged();
@@ -94,28 +99,22 @@ public class OrderService {
         return Page.empty();
     }
 
-    public List<Order> getOrdersFromLast7Days() {
-        User user = securityService.getUserLogged();
-        if (user != null) {
-            return orderRepository.findByUserEmail(user.getEmail());
-        }
-        return orderRepository.findAll(OrderSpecs.createdInLast7Days());
-    }
-
     public Order updateOrder(Order order) {
         if (order.getId() == null) {
             throw new IllegalArgumentException("The order doesnt exists");
         }
-        Order orderUpdated = orderRepository.save(order);
 
-        notifyUpdateRabbitMq(orderUpdated);
+        Order orderUpdated = orderRepository.save(order);
+        if (orderUpdated.getStatus() == OrderStatus.DELIVERED) {
+            notifyCompleteRabbitMq(orderUpdated);
+        } else {
+            notifyUpdateRabbitMq(orderUpdated);
+        }
+
 
         return orderUpdated;
     }
 
-    public Optional<Order> getOrderById(String id) {
-        return orderRepository.findById(id);
-    }
 
     private BigDecimal getTotal(Order order) {
         BigDecimal total = order.getItens().stream()
@@ -134,9 +133,13 @@ public class OrderService {
         return totalQuantity;
     }
 
+    public Optional<Order> getOrderById(String id) {
+        return orderRepository.findById(id);
+    }
+
     public void notifyRabbitMq(Order order, MessagePostProcessor messagePostProcessor) {
         try {
-            notificationService.orderCreatedNotification(order, orderNotificationExchange, messagePostProcessor);
+            notificationService.notify(order, orderNotificationExchange, routingOrderCreated, messagePostProcessor);
         } catch (RuntimeException e) {
             order.setIntegrity(false);
             orderRepository.save(order);
@@ -145,8 +148,17 @@ public class OrderService {
 
     public void notifyUpdateRabbitMq(Order order) {
         try {
-            notificationService.orderUpdateNotification(order, orderNotificationExchange);
+            notificationService.notify(order, orderNotificationExchange, routingOrderUpdate);
         } catch (RuntimeException e) {
+            order.setIntegrity(false);
+            orderRepository.save(order);
+        }
+    }
+
+    public void notifyCompleteRabbitMq(Order order) {
+        try {
+            notificationService.notify(order, orderNotificationExchange, routingOrderComplete);
+        } catch (RuntimeException e){
             order.setIntegrity(false);
             orderRepository.save(order);
         }

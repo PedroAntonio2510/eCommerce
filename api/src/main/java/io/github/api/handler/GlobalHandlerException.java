@@ -2,6 +2,7 @@ package io.github.api.handler;
 
 import io.github.api.domain.exceptions.AcessDeniedException;
 import io.github.api.domain.exceptions.ObjectDuplicateException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class GlobalHandlerException {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ProblemDetail handleMethoArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ProblemDetail handleMethoArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
         List<Map<String, String>> errors = ex.getFieldErrors()
                 .stream()
                 .map(
@@ -34,7 +35,7 @@ public class GlobalHandlerException {
         problemDetail.setTitle("Validation Error");
         problemDetail.setType(URI.create("http://localhost:8080/errors/validation"));
         problemDetail.setProperty("errors", errors);
-
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
         return problemDetail;
     }
 
@@ -47,18 +48,19 @@ public class GlobalHandlerException {
     }
 
     @ExceptionHandler(NullPointerException.class)
-    public ProblemDetail handleNullPointerException() {
+    public ProblemDetail handleNullPointerException(HttpServletRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "The product id/quantity is null or doesn`t exists"
         );
         problemDetail.setTitle("Null Pointer Exception");
         problemDetail.setType(URI.create("http://localhost:8080/errors/null-pointer"));
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
         return problemDetail;
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ProblemDetail handleJsonParseException() {
+    public ProblemDetail handleJsonParseException(HttpServletRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.BAD_REQUEST,
                 "Invalid payment type"
@@ -66,11 +68,12 @@ public class GlobalHandlerException {
         problemDetail.setTitle("Json Parse Error");
         problemDetail.setType(URI.create("http://localhost:8080/errors/messagenotreadable"));
         problemDetail.setProperty("message", "There isn`t a valid payment method");
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
         return problemDetail;
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ProblemDetail handleUsernameNotFoundException(UsernameNotFoundException ex) {
+    public ProblemDetail handleUsernameNotFoundException(UsernameNotFoundException ex, HttpServletRequest request) {
         String details = ex.getMessage();
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.NOT_FOUND,
@@ -78,30 +81,34 @@ public class GlobalHandlerException {
         );
         problemDetail.setTitle("Username Not Found");
         problemDetail.setType(URI.create("http://localhost:8080/erros/usernameNotFound"));
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
         problemDetail.setProperty("message", "The login or password are invalid ");
+
         return problemDetail;
     }
 
     @ExceptionHandler(AcessDeniedException.class)
-    public ProblemDetail handleAcessDeniedException() {
+    public ProblemDetail handleAcessDeniedException(HttpServletRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.FORBIDDEN,
                 "Acess denied"
         );
         problemDetail.setTitle("Acess Denied");
         problemDetail.setType(URI.create("http://localhost:8080/errors/acessDenied"));
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
         problemDetail.setProperty("message", "You don`t have acess to this resource");
         return problemDetail;
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ProblemDetail handleRuntimeException() {
+    public ProblemDetail handleRuntimeException(HttpServletRequest request) {
         ProblemDetail problemDetail= ProblemDetail.forStatusAndDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "An unexpect error ocorreded. Please try again later"
         );
         problemDetail.setTitle("Server error");
         problemDetail.setType(URI.create("http://localhost:8080/errors/runtime"));
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
         problemDetail.setProperty("message", "An unexpect error ocorreded. Please try again later");
         return problemDetail;
     }

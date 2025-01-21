@@ -12,6 +12,14 @@ public class RabbitMqNotificationService {
 
     private RabbitTemplate rabbitTemplate;
 
+    public void notify(Order order, String exchange, String routingKey, MessagePostProcessor messagePostProcessor) {
+        rabbitTemplate.convertAndSend(exchange, routingKey, order, messagePostProcessor);
+    }
+
+    public void notify(Order order, String exchange, String routingKey) {
+        rabbitTemplate.convertAndSend(exchange, routingKey, order);
+    }
+
     public void orderCreatedNotification(Order order, String exchange){
         rabbitTemplate.convertAndSend(exchange, "order-created", order);
     }
@@ -24,4 +32,7 @@ public class RabbitMqNotificationService {
         rabbitTemplate.convertAndSend(exchange, "order-update", order);
     }
 
+    public void orderCompleteNotification(Order order, String exchange) {
+        rabbitTemplate.convertAndSend(exchange, "order-complete", order);
+    }
 }
