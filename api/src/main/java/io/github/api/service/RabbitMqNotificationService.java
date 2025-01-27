@@ -19,20 +19,4 @@ public class RabbitMqNotificationService {
     public void notify(Order order, String exchange, String routingKey) {
         rabbitTemplate.convertAndSend(exchange, routingKey, order);
     }
-
-    public void orderCreatedNotification(Order order, String exchange){
-        rabbitTemplate.convertAndSend(exchange, "order-created", order);
-    }
-
-    public void orderCreatedNotification(Order order, String exchange, MessagePostProcessor messagePostProcessor){
-        rabbitTemplate.convertAndSend(exchange, "order-created", order, messagePostProcessor);
-    }
-
-    public void orderUpdateNotification(Order order, String exchange) {
-        rabbitTemplate.convertAndSend(exchange, "order-update", order);
-    }
-
-    public void orderCompleteNotification(Order order, String exchange) {
-        rabbitTemplate.convertAndSend(exchange, "order-complete", order);
-    }
 }

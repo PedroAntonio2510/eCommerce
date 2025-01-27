@@ -1,7 +1,6 @@
 package io.github.api.service;
 
 import io.github.api.domain.Product;
-import io.github.api.repositories.OrderRepository;
 import io.github.api.repositories.ProductRepository;
 import io.github.api.repositories.specs.ProductSpecs;
 import io.github.api.validator.ProductValidator;
@@ -20,7 +19,6 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository repository;
-    private final OrderRepository orderRepository;
     private final ProductValidator validator;
 
     public Product saveProduct(Product product) {

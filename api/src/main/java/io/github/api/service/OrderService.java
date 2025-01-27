@@ -105,6 +105,7 @@ public class OrderService {
         }
 
         Order orderUpdated = orderRepository.save(order);
+
         if (orderUpdated.getStatus() == OrderStatus.DELIVERED) {
             notifyCompleteRabbitMq(orderUpdated);
         } else {

@@ -22,6 +22,10 @@ public class SchedulerOrderWithoutIntegrity {
     private final OrderRepository orderRepository;
     private final RabbitMqNotificationService notificationService;
     private final String exchange;
+
+    @Value("order-crated")
+    private String routingOrderCreated;
+
     private final Logger logger = LoggerFactory.getLogger(SchedulerOrderWithoutIntegrity.class);
 
     public SchedulerOrderWithoutIntegrity(OrderRepository orderRepository,
@@ -37,7 +41,7 @@ public class SchedulerOrderWithoutIntegrity {
     public void searchOrderWithoutIntegratity() {
         orderRepository.findAllByIntegrityIsFalse().forEach(order -> {
             try {
-                notificationService.orderCreatedNotification(order, exchange);
+                notificationService.notify(order, exchange, routingOrderCreated);
                 updateOrder(order);
             } catch (RuntimeException ex) {
                 logger.error(ex.getMessage());
