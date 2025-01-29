@@ -28,9 +28,9 @@ public class OrderService {
     private final SecurityService securityService;
 
     @Value("${rabbitmq.order.exchange}")
-    private String orderNotificationExchange;
+    private String notificationExchange;
 
-    @Value("order-crated")
+    @Value("order-created")
     private String routingOrderCreated;
 
     @Value("order-update")
@@ -70,7 +70,7 @@ public class OrderService {
             return message;
         };
 
-        notifyRabbitMq(order, messagePostProcessor);
+        notifyRabbitMq(order, routingOrderCreated, messagePostProcessor);
 
         return savedOrder;
 
@@ -107,12 +107,10 @@ public class OrderService {
         Order orderUpdated = orderRepository.save(order);
 
         if (orderUpdated.getStatus() == OrderStatus.DELIVERED) {
-            notifyCompleteRabbitMq(orderUpdated);
+            notifyRabbitmq(orderUpdated, routingOrderComplete);
         } else {
-            notifyUpdateRabbitMq(orderUpdated);
+            notifyRabbitmq(orderUpdated, routingOrderUpdate);
         }
-
-
         return orderUpdated;
     }
 
@@ -138,30 +136,23 @@ public class OrderService {
         return orderRepository.findById(id);
     }
 
-    public void notifyRabbitMq(Order order, MessagePostProcessor messagePostProcessor) {
+    public void notifyRabbitMq(Order order, String routingKey, MessagePostProcessor messagePostProcessor) {
         try {
-            notificationService.notify(order, orderNotificationExchange, routingOrderCreated, messagePostProcessor);
+            notificationService.notify(order, notificationExchange, routingKey, messagePostProcessor);
+        } catch (RuntimeException e) {
+            order.setIntegrity(false);
+            orderRepository.save(order);
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyRabbitmq(Order order, String routingKey) {
+        try {
+            notificationService.notify(order, notificationExchange, routingKey);
         } catch (RuntimeException e) {
             order.setIntegrity(false);
             orderRepository.save(order);
         }
     }
 
-    public void notifyUpdateRabbitMq(Order order) {
-        try {
-            notificationService.notify(order, orderNotificationExchange, routingOrderUpdate);
-        } catch (RuntimeException e) {
-            order.setIntegrity(false);
-            orderRepository.save(order);
-        }
-    }
-
-    public void notifyCompleteRabbitMq(Order order) {
-        try {
-            notificationService.notify(order, orderNotificationExchange, routingOrderComplete);
-        } catch (RuntimeException e){
-            order.setIntegrity(false);
-            orderRepository.save(order);
-        }
-    }
 }

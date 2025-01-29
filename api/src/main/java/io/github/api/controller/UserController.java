@@ -27,7 +27,7 @@ public class UserController implements GenericController {
     public ResponseEntity<?> save(@RequestBody @Valid UserRequestDTO request) {
         User user = userMapper.toEntity(request);
         URI uri = headerLocation(user.getId());
-        service.saveUser(user);
+        service.registerUser(user);
         return ResponseEntity.created(uri).build();
     }
 
@@ -53,7 +53,7 @@ public class UserController implements GenericController {
                     user.setPassword(newUser.getPassword());
                     user.setLogin(newUser.getLogin());
 
-                    service.saveUser(user);
+                    service.registerUser(user);
                     return ResponseEntity.noContent().build();
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }

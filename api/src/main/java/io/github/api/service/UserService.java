@@ -2,6 +2,7 @@ package io.github.api.service;
 
 import io.github.api.domain.User;
 import io.github.api.repositories.UserRepository;
+import io.github.api.util.RandomString;
 import io.github.api.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,10 +19,15 @@ public class UserService {
     private final UserValidator validator;
     private final PasswordEncoder encoder;
 
-    public User saveUser(User user){
+    public User registerUser(User user){
         validator.validate(user);
         user.setRoles(List.of("USER"));
         user.setPassword(encoder.encode(user.getPassword()));
+
+        String randomCode = RandomString.generateRandomString(64);
+        user.setVerificationCode(randomCode);
+        user.setEnabled(false);
+
         return repository.save(user);
     }
 

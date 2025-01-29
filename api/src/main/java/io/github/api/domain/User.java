@@ -53,6 +53,10 @@ public class User {
     @Column(name = "roles", columnDefinition = "varchar[]")
     private List<String> roles;
 
+    private String verificationCode;
+
+    private boolean enabled;
+
     @CreatedDate
     @Column(name = "created_at")
     private LocalDate createdAt;

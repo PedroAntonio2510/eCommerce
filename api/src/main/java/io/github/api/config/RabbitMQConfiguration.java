@@ -1,9 +1,6 @@
 package io.github.api.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,58 +16,11 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfiguration {
 
     @Value("${rabbitmq.order.exchange}")
-    private String orderExchange;
-
-    @Value("${rabbitmq.order.queue-created}")
-    private String orderCreatedQueue;
-
-    @Value("${rabbitmq.order.queue-update}")
-    private String orderUpdatedQueue;
-
-    @Value("${rabbitmq.order.queue-complete}")
-    private String orderCompleteQueue;
-
-    // Create the queues
-    @Bean
-    public Queue orderCreatedQueue() {
-        return new Queue(orderCreatedQueue, true);
-    }
+    private String notificationExchange;
 
     @Bean
-    public Queue orderUpdatedQueue() {
-        return new Queue(orderUpdatedQueue, true);
-    }
-
-    @Bean
-    public Queue orderCompleteQueue() {
-        return new Queue(orderCompleteQueue, true);
-    }
-
-    @Bean
-    public DirectExchange createDirectOrderExchange() {
-        return new DirectExchange(orderExchange);
-    }
-
-    // Create the bindings
-    @Bean
-    public Binding bindingOrderCreatedQueue(DirectExchange orderExchange,
-                                            Queue orderCreatedQueue) {
-        return BindingBuilder.bind(orderCreatedQueue)
-                .to(orderExchange).with("order-created");
-    }
-
-    @Bean
-    public Binding bindingOrderUpdatedQueue(DirectExchange orderExchange,
-                                            Queue orderUpdatedQueue) {
-        return BindingBuilder.bind(orderUpdatedQueue)
-                .to(orderExchange).with("order-update");
-    }
-
-    @Bean
-    public Binding bingindOrderCompleteQueue(DirectExchange orderExchange,
-                                             Queue orderCompleteQueue) {
-        return BindingBuilder.bind(orderCompleteQueue)
-                .to(orderExchange).with("order-complete");
+    public DirectExchange createDirectNotificationExchange() {
+        return new DirectExchange(notificationExchange);
     }
 
     @Bean
@@ -79,7 +29,7 @@ public class RabbitMQConfiguration {
     }
 
     @Bean
-    public ApplicationListener<ApplicationReadyEvent> initializeAdmin(RabbitAdmin rabbitAdmin){
+    public ApplicationListener<ApplicationReadyEvent> initializeAdmin(RabbitAdmin rabbitAdmin) {
         return event -> rabbitAdmin.initialize();
     }
 
@@ -89,7 +39,7 @@ public class RabbitMQConfiguration {
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory){
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate();
         rabbitTemplate.setConnectionFactory(connectionFactory);
         rabbitTemplate.setMessageConverter(jsonMessageConverter());
