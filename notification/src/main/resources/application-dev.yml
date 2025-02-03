@@ -1,0 +1,29 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtpl:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+rabbitmq:
+  queue:
+    created: ${order.created.queue}
+    update: ${order.update.queue}
+    complete: ${order.complete.queue}
+    email-verification: ${email.verification.queue}
+
+aws:
+  acessKey: ${ACESS_KEY}
+  secretKey: ${SECRET_KEY}
