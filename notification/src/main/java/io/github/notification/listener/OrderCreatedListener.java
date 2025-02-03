@@ -18,7 +18,7 @@ public class OrderCreatedListener {
         this.sesNotificationService = sesNotificationService;
     }
 
-    @RabbitListener(queues = "${rabbitmq.queue.order.created}")
+    @RabbitListener(queues = "${rabbitmq.queue.created}")
     public void orderCreated(Order order) {
         String message = String.format(DefaultMessages.ORDER_CREATED,
                 order.getStatus().toString());
@@ -29,18 +29,5 @@ public class OrderCreatedListener {
         snsNotificationService.notificateSNS(order.getUser().getPhoneNumber(), message);
         sesNotificationService.notificateSES(order.getUser().getEmail(), messageSES);
     }
-
-    @RabbitListener(queues = "${rabbitmq.queue.order.update}")
-    public void orderUpdate(Order order) {
-        String messageSES = String.format(DefaultMessages.HTMLBODY,
-                order.getStatus().toString());
-
-        String message = String.format(DefaultMessages.ORDER_UPDATE,
-                    order.getStatus().toString());
-
-        snsNotificationService.notificateSNS(order.getUser().getPhoneNumber(), message);
-        sesNotificationService.notificateSES(order.getUser().getEmail(), messageSES);
-    }
-
 
 }

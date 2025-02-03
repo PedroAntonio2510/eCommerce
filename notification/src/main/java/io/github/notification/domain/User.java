@@ -1,14 +1,12 @@
 package io.github.notification.domain;
 
-import lombok.Data;
-
 import java.time.LocalDate;
 import java.util.List;
 
 public class User {
 
     private String id;
-
+    
     private String login;
 
     private String password;
@@ -24,6 +22,10 @@ public class User {
     private String cpf;
 
     private List<String> roles;
+
+    private String verificationCode;
+
+    private boolean enabled;
 
     private LocalDate createdAt;
 
@@ -97,6 +99,22 @@ public class User {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public LocalDate getCreatedAt() {

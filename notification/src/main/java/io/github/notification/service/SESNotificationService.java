@@ -2,38 +2,59 @@ package io.github.notification.service;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.*;
+import io.github.notification.domain.User;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Service
 public class SESNotificationService {
 
     private final AmazonSimpleEmailService amazonSES;
+    private final SpringTemplateEngine templateEngine;
 
-    public SESNotificationService(AmazonSimpleEmailService amazonSES) {
+    public SESNotificationService(AmazonSimpleEmailService amazonSES,
+                                  SpringTemplateEngine templateEngine) {
         this.amazonSES = amazonSES;
+        this.templateEngine = templateEngine;
     }
+
+    private String verifyURL = "http://localhost:8080/user/verify?code=";
 
     static final String SUBJECT = "Amazon SES test (AWS SDK for Java)";
 
     static final String FROM = "antonio.pedro25@outlook.com";
 
-    static final String HTMLBODY = "<h1>Amazon SES test (AWS SDK for Java)</h1>"
-            + "<p>This email was sent with <a href='https://aws.amazon.com/ses/'>"
-            + "Amazon SES</a> using the <a href='https://aws.amazon.com/sdk-for-java/'>"
-            + "AWS SDK for Java</a>";
+    static final String TEXTBODY = "Your order was realized, stay alert on email for updates. ";
 
-    static final String TEXTBODY = "This email was sent through Amazon SES "
-            + "using the AWS SDK for Java.";
-
-    public void notificateSES(String email) {
+    public void notificateSES(String email, String message) {
         SendEmailRequest request = new SendEmailRequest()
                 .withDestination(new Destination().withToAddresses(email))
                 .withMessage(new Message()
                         .withBody(new Body()
                                 .withHtml(new Content()
-                                        .withCharset("UTF-8").withData(HTMLBODY))
+                                        .withCharset("UTF-8").withData(message))
                                 .withText(new Content()
                                         .withCharset("UTF-8").withData(TEXTBODY)))
+                        .withSubject(new Content()
+                                .withCharset("UTF-8").withData(SUBJECT)))
+                .withSource(FROM);
+        amazonSES.sendEmail(request);
+    }
+
+    public void notificateSES(User user) {
+        Context context =  new Context();
+        context.setVariable("name", user.getName());
+        context.setVariable("url", verifyURL + user.getVerificationCode());
+
+        String content = templateEngine.process("emailTemplate", context);
+
+        SendEmailRequest request = new SendEmailRequest()
+                .withDestination(new Destination().withToAddresses(user.getEmail()))
+                .withMessage(new Message()
+                        .withBody(new Body()
+                                .withHtml(new Content()
+                                        .withCharset("UTF-8").withData(content)))
                         .withSubject(new Content()
                                 .withCharset("UTF-8").withData(SUBJECT)))
                 .withSource(FROM);

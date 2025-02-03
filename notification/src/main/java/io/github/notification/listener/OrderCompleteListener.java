@@ -8,37 +8,25 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderCreatedListener {
+public class OrderCompleteListener {
 
     private final SNSNotificationService snsNotificationService;
     private final SESNotificationService sesNotificationService;
 
-    public OrderCreatedListener(SNSNotificationService snsNotificationService, SESNotificationService sesNotificationService) {
+    public OrderCompleteListener(SNSNotificationService snsNotificationService, SESNotificationService sesNotificationService) {
         this.snsNotificationService = snsNotificationService;
         this.sesNotificationService = sesNotificationService;
     }
 
-    @RabbitListener(queues = "${rabbitmq.queue.order.created}")
-    public void orderCreated(Order order) {
-        String message = String.format(DefaultMessages.ORDER_CREATED,
+    @RabbitListener(queues = "${rabbitmq.queue.complete}")
+    public void orderComplete(Order order){
+        String messageSES = String.format(DefaultMessages.HTMLBODYCOMPLETE,
                 order.getStatus().toString());
 
-        String messageSES = String.format(DefaultMessages.HTMLBODY,
+        String messageSNS = String.format(DefaultMessages.ORDER_COMPLETE,
                 order.getStatus().toString());
 
-        snsNotificationService.notificateSNS(order.getUser().getPhoneNumber(), message);
-        sesNotificationService.notificateSES(order.getUser().getEmail(), messageSES);
-    }
-
-    @RabbitListener(queues = "${rabbitmq.queue.order.update}")
-    public void orderUpdate(Order order) {
-        String messageSES = String.format(DefaultMessages.HTMLBODY,
-                order.getStatus().toString());
-
-        String message = String.format(DefaultMessages.ORDER_UPDATE,
-                    order.getStatus().toString());
-
-        snsNotificationService.notificateSNS(order.getUser().getPhoneNumber(), message);
+        snsNotificationService.notificateSNS(order.getUser().getPhoneNumber(), messageSNS);
         sesNotificationService.notificateSES(order.getUser().getEmail(), messageSES);
     }
 

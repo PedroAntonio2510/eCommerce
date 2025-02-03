@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
-public class AwsSnsConfiguration {
+public class AwsConfiguration {
 
     @Value("${aws.acessKey}")
     private String acessKey;

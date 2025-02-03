@@ -1,12 +1,29 @@
-spring.application.name=notification
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtpl:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 
-spring.rabbitmq.host=localhost
-spring.rabbitmq.port=5672
-spring.rabbitmq.username=guest
-spring.rabbitmq.password=guest
+rabbitmq:
+  queue:
+    created: ${order.created.queue}
+    update: ${order.update.queue}
+    complete: ${order.complete.queue}
+    email-verification: ${email.verification.queue}
 
-rabbitmq.queue-created=${order.created.queue}
-rabbitmq.queue.order.update=${order.update.queue}
-rabbitmq.queue.order.complete=${order.complete.queue}
-aws.acessKey=${ACESS_KEY}
-aws.secretKey=${SECRET_KEY}
+aws:
+  acessKey: ${ACESS_KEY}
+  secretKey: ${SECRET_KEY}
