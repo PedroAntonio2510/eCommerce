@@ -5,15 +5,19 @@ import io.github.notification.messages.DefaultMessages;
 import io.github.notification.service.SESNotificationService;
 import io.github.notification.service.SNSNotificationService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderUpdateListener {
+public class OrderPendingListener {
 
     private final SNSNotificationService snsNotificationService;
     private final SESNotificationService sesNotificationService;
 
-    public OrderUpdateListener(SNSNotificationService snsNotificationService, SESNotificationService sesNotificationService) {
+    @Value("${}=")
+    private String notificationExchange;
+
+    public OrderPendingListener(SNSNotificationService snsNotificationService, SESNotificationService sesNotificationService) {
         this.snsNotificationService = snsNotificationService;
         this.sesNotificationService = sesNotificationService;
     }

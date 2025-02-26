@@ -48,7 +48,10 @@ logging:
 
 rabbitmq:
   order:
-    exchange: ${notification.exchange}
+    notification:
+      exchange: ${notification.exchange}
+    payment:
+      exchange: ${payment.exchange}
     queue-created: ${order.created.queue}
     queue-update: ${order.update.queue}
     queue-complete: ${order.complete.queue}

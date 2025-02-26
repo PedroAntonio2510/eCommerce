@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:17.0
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=ecommerceapiDB
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq:4.0.5-management
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - backend
+
+networks:
+  backend:
+    name: ecommerceApi
