@@ -2,6 +2,7 @@ package io.github.api.handler;
 
 import io.github.api.domain.exceptions.AcessDeniedException;
 import io.github.api.domain.exceptions.ObjectDuplicateException;
+import io.github.api.domain.exceptions.UserEnabledException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -19,7 +20,8 @@ import java.util.Map;
 public class GlobalHandlerException {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ProblemDetail handleMethoArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+    public ProblemDetail handleMethoArgumentNotValidException(MethodArgumentNotValidException ex,
+                                                              HttpServletRequest request) {
         List<Map<String, String>> errors = ex.getFieldErrors()
                 .stream()
                 .map(
@@ -40,10 +42,15 @@ public class GlobalHandlerException {
     }
 
     @ExceptionHandler(ObjectDuplicateException.class)
-    public ProblemDetail handleProductDuplicateException(ObjectDuplicateException ex) {
+    public ProblemDetail handleProductDuplicateException(ObjectDuplicateException ex,
+                                                         HttpServletRequest request) {
         String details = ex.getMessage();
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, details);
         problemDetail.setType(URI.create("http://localhost:8080/errors/duplicate"));
+        problemDetail.setTitle("Duplicate Object");
+        problemDetail.setStatus(409);
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
         return problemDetail;
     }
 
@@ -80,10 +87,24 @@ public class GlobalHandlerException {
                 details
         );
         problemDetail.setTitle("Username Not Found");
-        problemDetail.setType(URI.create("http://localhost:8080/erros/usernameNotFound"));
+        problemDetail.setType(URI.create("http://localhost:8080/errors/usernameNotFound"));
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         problemDetail.setProperty("message", "The login or password are invalid ");
 
+        return problemDetail;
+    }
+    
+    @ExceptionHandler(UserEnabledException.class)
+    public ProblemDetail handleUserNotEnableException(UserEnabledException ex, HttpServletRequest request) {
+        String details = ex.getMessage();
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.FORBIDDEN, 
+                "User not verified"
+        );
+        problemDetail.setTitle("User not verified");
+        problemDetail.setType(URI.create("http://localhost:8080/errors/userEnable"));
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        problemDetail.setProperty("message", ex.getMessage());
         return problemDetail;
     }
 

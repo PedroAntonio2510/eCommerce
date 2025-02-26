@@ -18,9 +18,11 @@ spring:
             required: true
 
 rabbitmq:
+  exchange:
+    notification: notification.ex
   queue:
     created: ${order.created.queue}
-    update: ${order.update.queue}
+    pending: ${order.pending.queue}
     complete: ${order.complete.queue}
     email-verification: ${email.verification.queue}
 

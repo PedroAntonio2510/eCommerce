@@ -1,10 +1,12 @@
 package io.github.api.service;
 
+import io.github.api.domain.ItemProduct;
 import io.github.api.domain.Order;
 import io.github.api.domain.User;
 import io.github.api.domain.enums.OrderStatus;
 import io.github.api.repositories.OrderRepository;
 import io.github.api.security.SecurityService;
+import io.github.api.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,9 +28,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final RabbitMqNotificationService notificationService;
     private final SecurityService securityService;
+    private final UserValidator validator;
 
-    @Value("${rabbitmq.order.exchange}")
+    @Value("${rabbitmq.order.notification.exchange}")
     private String notificationExchange;
+
+    @Value("${rabbitmq.order.payment.exchange}")
+    private String paymentExchange;
 
     @Value("order-created")
     private String routingOrderCreated;
@@ -41,13 +47,16 @@ public class OrderService {
 
     public Order saveOrder(Order order) {
         User user = securityService.getUserLogged();
+        validator.isUserEnable(user);
+
         if (user == null) {
             throw new IllegalStateException("No user is logged in");
         }
+
         // Mapear os itens do pedido
-        order.getItens().forEach(item -> {
+        for (ItemProduct item : order.getItens()) {
             item.setOrder(order);
-        });
+        }
 
         BigDecimal total = getTotal(order);
 
@@ -70,10 +79,10 @@ public class OrderService {
             return message;
         };
 
-        notifyRabbitMq(order, routingOrderCreated, messagePostProcessor);
+        notifyRabbitMq(order, notificationExchange, routingOrderCreated, messagePostProcessor);
+        notifyRabbitMq(order, paymentExchange, routingOrderCreated, messagePostProcessor);
 
         return savedOrder;
-
     }
 
     public Page<Order> listOrder(Integer days,
@@ -107,9 +116,9 @@ public class OrderService {
         Order orderUpdated = orderRepository.save(order);
 
         if (orderUpdated.getStatus() == OrderStatus.DELIVERED) {
-            notifyRabbitmq(orderUpdated, routingOrderComplete);
+            notifyRabbitmq(orderUpdated, notificationExchange, routingOrderComplete);
         } else {
-            notifyRabbitmq(orderUpdated, routingOrderUpdate);
+            notifyRabbitmq(orderUpdated, notificationExchange, routingOrderUpdate);
         }
         return orderUpdated;
     }
@@ -136,9 +145,13 @@ public class OrderService {
         return orderRepository.findById(id);
     }
 
-    public void notifyRabbitMq(Order order, String routingKey, MessagePostProcessor messagePostProcessor) {
+    public Order findOrderById(String id){
+        return orderRepository.findOrderById(id);
+    }
+
+    public void notifyRabbitMq(Order order, String exchange, String routingKey, MessagePostProcessor messagePostProcessor) {
         try {
-            notificationService.notify(order, notificationExchange, routingKey, messagePostProcessor);
+            notificationService.notify(order, exchange, routingKey, messagePostProcessor);
         } catch (RuntimeException e) {
             order.setIntegrity(false);
             orderRepository.save(order);
@@ -146,9 +159,9 @@ public class OrderService {
         }
     }
 
-    public void notifyRabbitmq(Order order, String routingKey) {
+    public void notifyRabbitmq(Order order, String exchange, String routingKey) {
         try {
-            notificationService.notify(order, notificationExchange, routingKey);
+            notificationService.notify(order, exchange, routingKey);
         } catch (RuntimeException e) {
             order.setIntegrity(false);
             orderRepository.save(order);

@@ -13,8 +13,8 @@ public class RabbitMQConfiguration {
     @Value("${rabbitmq.queue.created}")
     private String orderCreatedQueue;
 
-    @Value("${rabbitmq.queue.update}")
-    private String orderUpdatedQueue;
+    @Value("${rabbitmq.queue.pending}")
+    private String orderPendingQueue;
 
     @Value("${rabbitmq.queue.complete}")
     private String orderCompleteQueue;
@@ -24,7 +24,10 @@ public class RabbitMQConfiguration {
 
     @Bean
     public DirectExchange notificationExchange() {
-        return ExchangeBuilder.directExchange("notification.ex").durable(true).build();
+        return ExchangeBuilder
+                .directExchange("notification.ex")
+                .durable(true)
+                .build();
     }
 
     @Bean
@@ -38,8 +41,8 @@ public class RabbitMQConfiguration {
     }
 
     @Bean
-    public Queue orderUpdatedQueue() {
-        return new Queue(orderUpdatedQueue, true);
+    public Queue orderPendingQueue() {
+        return new Queue(orderPendingQueue, true);
     }
 
     @Bean
@@ -63,19 +66,17 @@ public class RabbitMQConfiguration {
 
     @Bean
     public Binding bindingOrderUpdatedQueue(DirectExchange notifcationExchange,
-                                            Queue orderUpdatedQueue) {
-        return BindingBuilder.bind(orderUpdatedQueue)
-                .to(notifcationExchange).with("order-update");
+                                            Queue orderPendingQueue) {
+        return BindingBuilder.bind(orderPendingQueue)
+                .to(notifcationExchange).with("order-pending");
     }
 
     @Bean
     public Binding bindingOrderCompleteQueue(DirectExchange notifcationExchange,
-                                            Queue orderUpdatedQueue) {
-        return BindingBuilder.bind(orderUpdatedQueue)
+                                            Queue orderCompleteQueue) {
+        return BindingBuilder.bind(orderCompleteQueue)
                 .to(notifcationExchange).with("order-complete");
     }
-
-
 
     @Bean
     public MessageConverter messageConverter() {

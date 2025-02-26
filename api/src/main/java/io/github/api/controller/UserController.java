@@ -4,9 +4,11 @@ import io.github.api.domain.User;
 import io.github.api.domain.dto.UserRequestDTO;
 import io.github.api.domain.mapper.UserMapper;
 import io.github.api.service.UserService;
+import io.github.api.validator.UserValidator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +23,17 @@ import java.util.Optional;
 public class UserController implements GenericController {
 
     private final UserService service;
+    private final UserValidator validator;
     private final UserMapper userMapper;
+
+    @GetMapping("/verify")
+    public String verifyUser(@Param("code") String code) {
+        if (validator.validateVerificationCode(code)) {
+            return "verify_sucess";
+        } else {
+            return "verify_fail";
+        }
+    }
 
     @PostMapping
     public ResponseEntity<?> save(@RequestBody @Valid UserRequestDTO request) {
@@ -41,7 +53,8 @@ public class UserController implements GenericController {
 
     @PreAuthorize("hasAnyRole('USER', 'MANAGER')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody @Valid UserRequestDTO request) {
+    public ResponseEntity<?> updateUser(@PathVariable String id,
+                                        @RequestBody @Valid UserRequestDTO request) {
         return service.getById(id)
                 .map(user -> {
                     User newUser = userMapper.toEntity(request);

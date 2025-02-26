@@ -65,7 +65,7 @@ class ProductServiceTest {
     void testGivenExistingProductName_WhenSaveProduct_thenThrowsException() {
 
         doThrow(ObjectDuplicateException.class)
-                .when(validator).validate(any(Product.class));
+                .when(validator).isProductValid(any(Product.class), "product_existing");
 
         assertThrows(ObjectDuplicateException.class,
                 () -> service.saveProduct(product)

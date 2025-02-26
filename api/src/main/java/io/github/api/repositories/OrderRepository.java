@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecificationExecutor<Order> {
 
+    Order findOrderById(String id);
+
     List<Order> findAllByIntegrityIsFalse();
 
     List<Order> findByUserEmail(String email);

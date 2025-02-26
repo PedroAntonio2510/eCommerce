@@ -22,7 +22,7 @@ public class ProductService {
     private final ProductValidator validator;
 
     public Product saveProduct(Product product) {
-        validator.validate(product);
+        validator.isProductValid(product,"product_existing");
         return repository.save(product);
     }
 

@@ -49,7 +49,7 @@ public class ProductController implements GenericController{
     @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable String id,
-                                    @RequestBody ProductRequestDTO dto){
+                                    @RequestBody @Valid ProductRequestDTO dto){
         return service.getProductById(id)
                 .map(product -> {
                     Product newProduct = productMapper.toEntity(dto);

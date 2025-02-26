@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableScheduling
+//@EnableConfigurationProperties(PixConfig.class)
 public class ApiApplication {
 
 	public static void main(String[] args) {

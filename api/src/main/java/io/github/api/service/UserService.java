@@ -5,6 +5,7 @@ import io.github.api.repositories.UserRepository;
 import io.github.api.util.RandomString;
 import io.github.api.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +16,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
+    @Value("${rabbitmq.order.notification.exchange}")
+    private String notificationExchange;
+
     private final UserRepository repository;
     private final UserValidator validator;
     private final PasswordEncoder encoder;
+    private final RabbitMqNotificationService rabbitMqNotificationService;
 
     public User registerUser(User user){
-        validator.validate(user);
+        validator.isUserValid(user, "cpf_validation");
+        validator.isUserValid(user, "email_validation");
+
         user.setRoles(List.of("USER"));
         user.setPassword(encoder.encode(user.getPassword()));
 
@@ -28,17 +35,25 @@ public class UserService {
         user.setVerificationCode(randomCode);
         user.setEnabled(false);
 
-        return repository.save(user);
+        User newUser = repository.save(user);
+
+        rabbitMqNotificationService.notify(user, notificationExchange, "email.verification");
+
+        return newUser;
     }
 
     public User createOAuthUser(User user){
+        validator.isUserValid(user, "cpf_validation");
+        validator.isUserValid(user, "email_validation");
+
         user.setRoles(List.of("USER"));
         user.setPassword(encoder.encode(user.getPassword()));
         return repository.save(user);
     }
 
     public User createAdminUser(User user) {
-        validator.validate(user);
+        validator.isUserValid(user, "cpf_validation");
+        validator.isUserValid(user, "email_validation");
         user.setRoles(List.of("MANAGER"));
         user.setPassword(encoder.encode(user.getPassword()));
         return repository.save(user);

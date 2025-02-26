@@ -30,7 +30,7 @@ public class SchedulerOrderWithoutIntegrity {
 
     public SchedulerOrderWithoutIntegrity(OrderRepository orderRepository,
                                           RabbitMqNotificationService notificationService,
-                                          @Value("${rabbitmq.order.exchange}") String exchange) {
+                                          @Value("${rabbitmq.order.notification.exchange}") String exchange) {
         this.orderRepository = orderRepository;
         this.notificationService = notificationService;
         this.exchange = exchange;
@@ -38,7 +38,7 @@ public class SchedulerOrderWithoutIntegrity {
 
     @Transactional
     @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
-    public void searchOrderWithoutIntegratity() {
+    public void searchOrderWithoutIntegrity() {
         orderRepository.findAllByIntegrityIsFalse().forEach(order -> {
             try {
                 notificationService.notify(order, exchange, routingOrderCreated);
