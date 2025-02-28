@@ -4,11 +4,13 @@ import io.github.api.domain.ItemProduct;
 import io.github.api.domain.Order;
 import io.github.api.domain.User;
 import io.github.api.domain.enums.OrderStatus;
+import io.github.api.domain.enums.PaymentType;
 import io.github.api.repositories.OrderRepository;
 import io.github.api.security.SecurityService;
 import io.github.api.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +31,7 @@ public class OrderService {
     private final RabbitMqNotificationService notificationService;
     private final SecurityService securityService;
     private final UserValidator validator;
+    private final RabbitTemplate rabbitTemplate;
 
     @Value("${rabbitmq.order.notification.exchange}")
     private String notificationExchange;
@@ -69,20 +72,30 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
+        PaymentType paymentType = PaymentType.valueOf(order.getPayment().toString());
+
         // Define a prioridade de um pedido baseado no valor total
         BigDecimal priority = order.getTotal().compareTo(
                 new BigDecimal(1000)) > 0
                 ? new BigDecimal(10)
                 : new BigDecimal(5);
-        MessagePostProcessor messagePostProcessor = message -> {
-            message.getMessageProperties().setPriority(priority.intValue());
-            return message;
-        };
+
+        MessagePostProcessor messagePostProcessor = getMessagePostProcessor(priority);
 
         notifyRabbitMq(order, notificationExchange, routingOrderCreated, messagePostProcessor);
         notifyRabbitMq(order, paymentExchange, routingOrderCreated, messagePostProcessor);
 
+        paymentType.processPayment(order, rabbitTemplate);
+
         return savedOrder;
+    }
+
+    private MessagePostProcessor getMessagePostProcessor(BigDecimal priority) {
+        MessagePostProcessor messagePostProcessor = message -> {
+            message.getMessageProperties().setPriority(priority.intValue());
+            return message;
+        };
+        return messagePostProcessor;
     }
 
     public Page<Order> listOrder(Integer days,

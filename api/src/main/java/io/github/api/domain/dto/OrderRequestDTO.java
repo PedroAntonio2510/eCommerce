@@ -1,6 +1,6 @@
 package io.github.api.domain.dto;
 
-import io.github.api.domain.enums.OrderPayment;
+import io.github.api.domain.enums.PaymentType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -12,7 +12,7 @@ public record OrderRequestDTO(
         List<ItemProductRequestDTO> itens,
 
         @NotNull(message = "You must provide a payment method")
-        OrderPayment payment
+        PaymentType payment
 
 ) {
 }

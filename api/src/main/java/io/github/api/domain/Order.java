@@ -1,7 +1,7 @@
 package io.github.api.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import io.github.api.domain.enums.OrderPayment;
+import io.github.api.domain.enums.PaymentType;
 import io.github.api.domain.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -45,7 +45,7 @@ public class Order {
     private BigDecimal total;
 
     @Enumerated(EnumType.STRING)
-    private OrderPayment payment;
+    private PaymentType payment;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;

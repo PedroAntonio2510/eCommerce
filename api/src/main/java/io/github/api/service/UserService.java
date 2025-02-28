@@ -54,6 +54,8 @@ public class UserService {
     public User createAdminUser(User user) {
         validator.isUserValid(user, "cpf_validation");
         validator.isUserValid(user, "email_validation");
+
+        user.setEnabled(true);
         user.setRoles(List.of("MANAGER"));
         user.setPassword(encoder.encode(user.getPassword()));
         return repository.save(user);
