@@ -2,7 +2,7 @@ package io.github.api.validator;
 
 import io.github.api.domain.User;
 import io.github.api.domain.exceptions.ObjectDuplicateException;
-import io.github.api.domain.exceptions.UserEnabledException;
+import io.github.api.domain.exceptions.UserNotEnabledException;
 import io.github.api.validator.codeVerificationStrategy.EmailVerificationCodeStrategy;
 import io.github.api.validator.userStrategy.UserValidationStrategy;
 import lombok.AllArgsConstructor;
@@ -31,7 +31,7 @@ public class UserValidator {
         if (strategyImpl) {
             return strategyImpl;
         }
-        throw new UserEnabledException("You must verify your email to make a order");
+        throw new UserNotEnabledException("You must verify your email to make a order");
 
     }
 

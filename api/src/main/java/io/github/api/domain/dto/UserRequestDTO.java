@@ -21,8 +21,12 @@ public record UserRequestDTO(
         @NotNull
         String password,
 
+        @NotBlank(message = "you must provide a password")
+        @NotNull
         String name,
 
+        @NotBlank(message = "you must provide a password")
+        @NotNull
         String lastName,
 
         @NotBlank

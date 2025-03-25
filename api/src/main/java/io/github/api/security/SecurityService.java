@@ -20,6 +20,6 @@ public class SecurityService {
             return customAuthentication.getUser();
         }
 
-        return null;
+        throw new IllegalStateException("No user is logged in");
     }
 }

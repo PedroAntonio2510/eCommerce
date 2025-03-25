@@ -3,6 +3,8 @@ package io.github.api.controller;
 import io.github.api.domain.User;
 import io.github.api.domain.dto.UserRequestDTO;
 import io.github.api.domain.mapper.UserMapper;
+import io.github.api.security.AuthenticationService;
+import io.github.api.security.JwtService;
 import io.github.api.service.UserService;
 import io.github.api.validator.UserValidator;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -25,6 +28,7 @@ public class UserController implements GenericController {
     private final UserService service;
     private final UserValidator validator;
     private final UserMapper userMapper;
+    private final AuthenticationService authenticationService;
 
     @GetMapping("/verify")
     public String verifyUser(@Param("code") String code) {
@@ -33,6 +37,11 @@ public class UserController implements GenericController {
         } else {
             return "verify_fail";
         }
+    }
+
+    @PostMapping("/authenticate")
+    public String authenticate(Authentication authentication) {
+        return authenticationService.authenticate(authentication);
     }
 
     @PostMapping

@@ -55,3 +55,9 @@ rabbitmq:
     queue-created: ${order.created.queue}
     queue-update: ${order.update.queue}
     queue-complete: ${order.complete.queue}
+
+jwt:
+  public:
+    key: classpath:app.pub
+  private:
+    key: classpath:app.key

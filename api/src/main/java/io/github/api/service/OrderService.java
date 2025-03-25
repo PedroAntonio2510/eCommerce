@@ -36,9 +36,6 @@ public class OrderService {
     @Value("${rabbitmq.order.notification.exchange}")
     private String notificationExchange;
 
-    @Value("${rabbitmq.order.payment.exchange}")
-    private String paymentExchange;
-
     @Value("order-created")
     private String routingOrderCreated;
 
@@ -50,11 +47,11 @@ public class OrderService {
 
     public Order saveOrder(Order order) {
         User user = securityService.getUserLogged();
+
         validator.isUserEnable(user);
 
-        if (user == null) {
-            throw new IllegalStateException("No user is logged in");
-        }
+        System.out.println("User: " + user.getName() + " " + user.getLastName());
+
 
         // Mapear os itens do pedido
         for (ItemProduct item : order.getItens()) {
@@ -83,7 +80,6 @@ public class OrderService {
         MessagePostProcessor messagePostProcessor = getMessagePostProcessor(priority);
 
         notifyRabbitMq(order, notificationExchange, routingOrderCreated, messagePostProcessor);
-        notifyRabbitMq(order, paymentExchange, routingOrderCreated, messagePostProcessor);
 
         paymentType.processPayment(order, rabbitTemplate);
 
@@ -158,7 +154,7 @@ public class OrderService {
         return orderRepository.findById(id);
     }
 
-    public Order findOrderById(String id){
+    public Order findOrderById(String id) {
         return orderRepository.findOrderById(id);
     }
 

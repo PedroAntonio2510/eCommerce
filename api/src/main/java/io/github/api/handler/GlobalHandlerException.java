@@ -2,7 +2,7 @@ package io.github.api.handler;
 
 import io.github.api.domain.exceptions.AcessDeniedException;
 import io.github.api.domain.exceptions.ObjectDuplicateException;
-import io.github.api.domain.exceptions.UserEnabledException;
+import io.github.api.domain.exceptions.UserNotEnabledException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -94,8 +94,8 @@ public class GlobalHandlerException {
         return problemDetail;
     }
     
-    @ExceptionHandler(UserEnabledException.class)
-    public ProblemDetail handleUserNotEnableException(UserEnabledException ex, HttpServletRequest request) {
+    @ExceptionHandler(UserNotEnabledException.class)
+    public ProblemDetail handleUserNotEnableException(UserNotEnabledException ex, HttpServletRequest request) {
         String details = ex.getMessage();
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.FORBIDDEN, 

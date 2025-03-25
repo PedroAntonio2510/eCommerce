@@ -1,0 +1,18 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+rabbitmq:
+  exchange:
+    payment: payment.ex
+  queue:
+    payment:
+      credit:
+      pix:
+
+mercado:
+  pago:
+    accessToken: TEST-2215165862638102-022112-bb11f4280aeea39f02085d7f0ff1e518-604410311

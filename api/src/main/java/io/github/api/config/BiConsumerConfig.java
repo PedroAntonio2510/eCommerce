@@ -15,7 +15,7 @@ public class BiConsumerConfig {
     public BiConsumer<Order, RabbitTemplate> orderBiConsumer() {
         return (order, rabbitTemplate) -> {
             Optional.ofNullable(order.getPayment())
-                    .orElseThrow(() -> new IllegalArgumentException("Tipo de pagamento inválido!"))
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid payment type!"))
                     .processPayment(order, rabbitTemplate);
         };
     }
