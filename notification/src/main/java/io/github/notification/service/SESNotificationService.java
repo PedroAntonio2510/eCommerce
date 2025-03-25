@@ -2,6 +2,7 @@ package io.github.notification.service;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.*;
+import com.mercadopago.resources.payment.Payment;
 import io.github.notification.domain.User;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -47,7 +48,7 @@ public class SESNotificationService {
         context.setVariable("name", user.getName());
         context.setVariable("url", verifyURL + user.getVerificationCode());
 
-        String content = templateEngine.process("emailTemplate", context);
+        String content = templateEngine.process("email-verification", context);
 
         SendEmailRequest request = new SendEmailRequest()
                 .withDestination(new Destination().withToAddresses(user.getEmail()))
@@ -60,5 +61,25 @@ public class SESNotificationService {
                 .withSource(FROM);
         amazonSES.sendEmail(request);
     }
+
+    public void notificateSES(String qrCode) {
+        Context context = new Context();
+        context.setVariable("qrCode", qrCode);
+
+        String content = templateEngine.process("email-pixpending", context);
+
+        SendEmailRequest request = new SendEmailRequest()
+                .withDestination(new Destination().withToAddresses("pedrinhodeccache@gmail.com"))
+                .withMessage(new Message()
+                        .withBody(new Body()
+                                .withHtml(new Content()
+                                        .withCharset("UTF-8").withData(content)))
+                        .withSubject(new Content()
+                                .withCharset("UTF-8").withData(SUBJECT)))
+                .withSource(FROM);
+        amazonSES.sendEmail(request);
+    }
+
+
 
 }

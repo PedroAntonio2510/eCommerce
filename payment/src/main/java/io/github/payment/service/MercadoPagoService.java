@@ -4,6 +4,7 @@ import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.common.IdentificationRequest;
 import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.payment.PaymentCreateRequest;
+import com.mercadopago.client.payment.PaymentPayerPhoneRequest;
 import com.mercadopago.client.payment.PaymentPayerRequest;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
@@ -31,22 +32,34 @@ public class MercadoPagoService {
                 )
                 .collect(Collectors.joining(", "));
 
+        PaymentPayerRequest payer = PaymentPayerRequest.builder()
+                .email("teste@gmail.com")
+                .identification(IdentificationRequest.builder()
+                        .type("CPF")
+                        .number("87927765078")
+                        .build())
+                .phone(PaymentPayerPhoneRequest.builder()
+                        .areaCode("55")
+                        .number("1234556")
+                        .build())
+                .firstName("Teste")
+                .lastName("usuario")
+                .build();
+
         PaymentCreateRequest createRequest =
                 PaymentCreateRequest.builder()
                         .transactionAmount(order.getTotal())
                         .description(description)
                         .paymentMethodId("pix")
-                        .payer(PaymentPayerRequest.builder()
-                                .firstName(order.getUser().getName())
-                                .lastName(order.getUser().getLastName())
-                                .identification(IdentificationRequest.builder()
-                                        .type("CPF")
-                                        .number(order.getUser().getCpf())
-                                        .build())
-                                .email(order.getUser().getEmail()).build())
+                        .payer(payer)
                         .build();
+
 
         Payment payment = client.create(createRequest);
         return payment;
     }
+
+
+
+
 }

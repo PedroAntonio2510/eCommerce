@@ -1,7 +1,7 @@
 package io.github.payment.domain;
 
-import io.github.payment.domain.enums.PaymentType;
 import io.github.payment.domain.enums.OrderStatus;
+import io.github.payment.domain.enums.PaymentType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,7 +23,7 @@ public class Order {
 
     private PaymentType payment;
 
-    private io.github.payment.domain.enums.OrderStatus status;
+    private OrderStatus status;
 
     private User user;
 

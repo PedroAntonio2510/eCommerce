@@ -1,7 +1,7 @@
 package io.github.notification.domain;
 
 
-import io.github.notification.domain.enums.OrderPayment;
+import io.github.notification.domain.enums.PaymentType;
 import io.github.notification.domain.enums.OrderStatus;
 
 import java.math.BigDecimal;
@@ -22,7 +22,7 @@ public class Order {
 
     private BigDecimal total;
 
-    private OrderPayment payment;
+    private PaymentType payment;
 
     private OrderStatus status;
 
@@ -50,7 +50,7 @@ public class Order {
         return total;
     }
 
-    public OrderPayment getPayment() {
+    public PaymentType getPayment() {
         return payment;
     }
 
@@ -94,7 +94,7 @@ public class Order {
         this.total = total;
     }
 
-    public void setPayment(OrderPayment payment) {
+    public void setPayment(PaymentType payment) {
         this.payment = payment;
     }
 

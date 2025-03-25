@@ -20,12 +20,24 @@ public class PaymentPendingListener {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @RabbitListener(queues = "payment-pending.ms-payment")
+    @RabbitListener(queues = "payment-pix.ms-payment")
     public void paymentPending(Order order) throws MPException, MPApiException {
-        Payment pixPayment = mercadoPagoService.createPixPayment(order);
-        rabbitTemplate.convertAndSend("notification.ex",
-                "order-pending",
-                pixPayment);
+        try {
+            Payment pixPayment = mercadoPagoService.createPixPayment(order);
+            rabbitTemplate.convertAndSend("notification.ex",
+                    "order-pending",
+                    pixPayment.getPointOfInteraction().getTransactionData().getQrCode());
+//            pixPayment.getPointOfInteraction().getTransactionData().getQrCode();
+//            pixPayment.getPointOfInteraction().getTransactionData().getQrCodeBase64();
+//            pixPayment.getPointOfInteraction().getTransactionData().getTicketUrl();
+
+        } catch (MPApiException e) {
+            var apiResponse = e.getApiResponse();
+            var content = apiResponse.getContent();
+            System.out.println(content);
+        } catch (MPException e) {
+            System.out.println(e.getMessage());
+        }
 
     }
 }

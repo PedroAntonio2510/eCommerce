@@ -32,11 +32,6 @@ public class RabbitMqConfiguration {
     }
 
     @Bean
-    public Queue paymentPendingQueue() {
-        return new Queue("payment-pending.ms-payment", true);
-    }
-
-    @Bean
     public Queue paymentPaidQueue() {
         return new Queue("payment-paid.ms-payment", true);
     }
@@ -53,13 +48,6 @@ public class RabbitMqConfiguration {
                                            Queue paymentPixQueue) {
         return BindingBuilder.bind(paymentPixQueue)
                 .to(paymentExchange).with("order-created-pix");
-    }
-
-    @Bean
-    public Binding bindPaymentPendingQueue(DirectExchange paymentExchange,
-                                           Queue paymentPendingQueue) {
-        return BindingBuilder.bind(paymentPendingQueue)
-                .to(paymentExchange).with("order-pending");
     }
 
     @Bean
