@@ -32,8 +32,8 @@ public class OrderPendingListener {
 
     @RabbitListener(queues = "${rabbitmq.queue.pending}")
     public void orderUpdate(String qrCode) {
-
         sesNotificationService.notificateSES(qrCode);
+
     }
 
 

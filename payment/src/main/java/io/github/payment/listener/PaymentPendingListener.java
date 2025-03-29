@@ -24,13 +24,14 @@ public class PaymentPendingListener {
     public void paymentPending(Order order) throws MPException, MPApiException {
         try {
             Payment pixPayment = mercadoPagoService.createPixPayment(order);
+
             rabbitTemplate.convertAndSend("notification.ex",
                     "order-pending",
                     pixPayment.getPointOfInteraction().getTransactionData().getQrCode());
-//            pixPayment.getPointOfInteraction().getTransactionData().getQrCode();
-//            pixPayment.getPointOfInteraction().getTransactionData().getQrCodeBase64();
-//            pixPayment.getPointOfInteraction().getTransactionData().getTicketUrl();
 
+            rabbitTemplate.convertAndSend("payment.ex",
+            "payment-in-analysis",
+                    pixPayment);
         } catch (MPApiException e) {
             var apiResponse = e.getApiResponse();
             var content = apiResponse.getContent();

@@ -2,17 +2,18 @@ package io.github.payment.service;
 
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.common.IdentificationRequest;
-import com.mercadopago.client.payment.PaymentClient;
-import com.mercadopago.client.payment.PaymentCreateRequest;
-import com.mercadopago.client.payment.PaymentPayerPhoneRequest;
-import com.mercadopago.client.payment.PaymentPayerRequest;
+import com.mercadopago.client.payment.*;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
+import com.mercadopago.net.MPResultsResourcesPage;
+import com.mercadopago.net.MPSearchRequest;
 import com.mercadopago.resources.payment.Payment;
 import io.github.payment.domain.Order;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,7 +60,24 @@ public class MercadoPagoService {
         return payment;
     }
 
+    public MPResultsResourcesPage<Payment> buscarPagemntos() throws MPException, MPApiException {
+        MercadoPagoConfig.setAccessToken(ACCESS_TOKEN);
+        PaymentClient client = new PaymentClient();
 
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("sort", "date_created");
+        filters.put("criteria", "desc");
+//        filters.put("external_reference", "ID_REF");
+        filters.put("range", "date_created");
+        filters.put("begin_date", "NOW-30DAYS");
+        filters.put("end_date", "NOW");
+
+        MPSearchRequest searchRequest =
+                MPSearchRequest.builder().offset(0).limit(30).filters(filters).build();
+//        LOGGER.info(client.search(searchRequest).getResponse().toString());
+
+        return client.search(searchRequest);
+    }
 
 
 }

@@ -37,6 +37,11 @@ public class RabbitMqConfiguration {
     }
 
     @Bean
+    public Queue paymentPixInAnalysisQueue() {
+        return new Queue("payment-pix-in-analysis.ms-payment", true);
+    }
+
+    @Bean
     public Binding bindPaymentCreatedCreditQueue(DirectExchange paymentExchange,
                                            Queue paymentCreditQueue) {
         return BindingBuilder.bind(paymentCreditQueue)
@@ -55,6 +60,12 @@ public class RabbitMqConfiguration {
                                         Queue paymentPaidQueue) {
         return BindingBuilder.bind(paymentPaidQueue)
                 .to(paymentExchange).with("payment-paid");
+    }
+
+    @Bean
+    public Binding bindPaymentPixInAnalysisQueue(DirectExchange paymentExchange, Queue paymentPixInAnalysisQueue) {
+        return BindingBuilder.bind(paymentPixInAnalysisQueue)
+                .to(paymentExchange).with("payment-in-analysis");
     }
 
     @Bean
