@@ -4,6 +4,11 @@ spring:
   output:
     ansi:
       enabled: always
+  mvc:
+    static-path-pattern: /static/**
+  web:
+    resources:
+      static-locations: classpath:/static/
   datasource:
     url: jdbc:postgresql://localhost:5432/${postgres.db}
     username: ${postgres.username}

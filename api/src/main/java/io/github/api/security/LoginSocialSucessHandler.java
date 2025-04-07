@@ -2,7 +2,6 @@ package io.github.api.security;
 
 import io.github.api.domain.User;
 import io.github.api.service.UserService;
-import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,11 +34,14 @@ public class LoginSocialSucessHandler extends SavedRequestAwareAuthenticationSuc
         String email = oAuth2User.getAttribute("email");
         System.out.println("Email: " + email);
 
+        String password = oAuth2User.getAttribute("password");
+        System.out.println("Password: " + password);
+
         User user = userService.getByEmail(email);
         System.out.println("User from database: " + user);
 
         if (user == null) {
-            user = registerUser(email);
+            user = registerUser(email, password);
         }
 
         CustomAuthentication customAuthentication = new CustomAuthentication(user);
@@ -49,13 +51,13 @@ public class LoginSocialSucessHandler extends SavedRequestAwareAuthenticationSuc
         super.onAuthenticationSuccess(request, response, authentication);
     }
 
-    private User registerUser(String email) {
+    private User registerUser(String email, String password) {
         User user;
         user = new User();
 
         user.setEmail(email);
         user.setLogin(getLoginByEmail(email));
-        user.setPassword(DefaultPassword);
+        user.setPassword(password);
 
         userService.createOAuthUser(user);
         return user;

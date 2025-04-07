@@ -1,0 +1,103 @@
+.container {
+    text-align: center;
+    display: flex;
+    align-items: center; /* Align items vertically */
+    justify-content: center; /* Align items horizontally */
+    height: 100vh; /* Fill the entire screen height */
+    width: 100vw; /* Fill the entire screen width */
+    background-color: #FFFFFF;
+}
+
+
+.login-container {
+    padding: 30px;
+    height: 350px;
+    width: 400px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    max-width: 400px;
+    max-height: 350px; /* Limit the height of the window */
+    overflow-y: auto;
+    background-color: #FFFFFF;
+    color: #DEEFE7;
+    border-radius: 30px;/* Add scroll if content exceeds the height */
+}
+
+.title {
+    display: block;
+    text-align: left;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30px;
+    color: #002333;
+    margin-bottom: 15px;
+}
+
+input {
+    color: #002333;
+    background-color: #FFFFFF;
+    width: 300px;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+input::placeholder {
+    color: #002333;
+    opacity: 1; /* Ensure the placeholder is fully visible */
+}
+
+
+.button-google {
+    display: inline-block;
+    align-items: center; /* Garante que o texto e o ícone fiquem alinhados verticalmente */
+    justify-content: center; /* Centraliza os itens horizontalmente */
+    gap: 10px; /* Espaço entre o ícone e o texto */
+    padding: 10px 16px;
+    border: none;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    width: 100%; /* Faz o botão ocupar toda a largura do contêiner */
+    max-width: 300px; /* Define um limite para evitar que fique muito largo */
+}
+
+.google-icon {
+    width: 25px;
+    height: 25px;
+    display: inline-block; /* Garante que não haja espaços extras ao redor da imagem */
+    vertical-align: middle; /* Alinha melhor com o texto */
+}
+
+button {
+    background-color: #FFFFFF;
+    width: 320px; /* Match the width of the input */
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px; /* Match the margin-bottom of the input */
+    height: auto; /* Ensure height adjusts to padding */
+    cursor: pointer;
+}
+
+.paragrafo {
+    display: flex;
+    align-items: center;
+}
+
+.paragrafo hr {
+    background: #B4BEC9;
+    flex: 1;
+    margin: 10px;
+    height: 1px;
+    border: none;
+}
+
+
+
+/* .login {
+    display: grid;
+    place-content: center;
+    border: 3px solid green;
+    height: 97vh;
+} */

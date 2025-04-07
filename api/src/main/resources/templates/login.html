@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoginPage</title>
+    <link th:href="@{/static/css/login.css}" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+    <div class="login-container">
+        <h1 class="title">Sign in</h1>
+        <!-- <button class="button-google">Cotinue with google</button> -->
+        <a th:href="@{/oauth2/authorization/google}"><button class="button-google">
+            <img src="https://www.vectorlogo.zone/logos/google/google-tile.svg" alt="Google Logo" class="google-icon">
+            Continue with Google
+        </button></a>
+        <div>
+            <div class="paragrafo">
+                <hr><p>or</p><hr>
+            </div>
+        </div>
+        <form th:action="@{/login}" method="post">
+            <input id="login" name="username" placeholder="Username" required>
+            <input type="password" id="password" name="password" placeholder="Password">
+            <button type="submit">Entrar</button>
+            <button type="submit">Registrar</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

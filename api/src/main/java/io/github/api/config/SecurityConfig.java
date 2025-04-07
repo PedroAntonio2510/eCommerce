@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import io.github.api.security.LoginSocialSucessHandler;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -44,22 +45,29 @@ public class SecurityConfig {
                                            LoginSocialSucessHandler sucessHandler) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(withDefaults())
+                .formLogin(configurer ->
+                        configurer.loginPage("/login"))
                 .httpBasic(withDefaults())
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers(HttpMethod.POST, "/user/**").permitAll();
                     authorize.requestMatchers("/login/**").permitAll();
                     authorize.requestMatchers("/user/authenticate").permitAll();
+                    authorize.requestMatchers("/static/css/**", "/js/**", "/images/**").permitAll();
                     authorize.anyRequest().authenticated();
                 })
                 .oauth2Login(oauth2 -> {
-                    oauth2.successHandler(sucessHandler);
+                    oauth2
+                            .loginPage("/login")
+                            .defaultSuccessUrl("/")
+                            .successHandler(sucessHandler);
                 })
                 .oauth2ResourceServer(conf -> {
                     conf.jwt(Customizer.withDefaults());
                 })
                 .build();
     }
+
+
 
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults(){

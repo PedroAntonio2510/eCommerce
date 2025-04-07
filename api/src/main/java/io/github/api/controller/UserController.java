@@ -4,7 +4,6 @@ import io.github.api.domain.User;
 import io.github.api.domain.dto.UserRequestDTO;
 import io.github.api.domain.mapper.UserMapper;
 import io.github.api.security.AuthenticationService;
-import io.github.api.security.JwtService;
 import io.github.api.service.UserService;
 import io.github.api.validator.UserValidator;
 import io.swagger.v3.oas.annotations.tags.Tag;
