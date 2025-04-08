@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Component
 public class ShedulerPaymentsAproved {
@@ -35,7 +34,7 @@ public class ShedulerPaymentsAproved {
         LOGGER.info(paymentMPResultsResourcesPage.getResponse().getStatusCode().toString());
         var resultsm = paymentMPResultsResourcesPage.getResults().stream()
                         .map(result -> result.getStatus().toString())
-                                .collect(Collectors.toList());
+                                .toList();
         LOGGER.info(resultsm.toString());
         try {
             paymentMPResultsResourcesPage.getResults().forEach(result -> {

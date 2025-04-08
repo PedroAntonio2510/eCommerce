@@ -14,8 +14,5 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
-
-
-
 }
 
