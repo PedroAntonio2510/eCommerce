@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  api-principal:
+    build: ./api-principal
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./secrets/api.env.secreto
+    depends_on:
+      - notificacao
+      - pagamento
+      - rabbitmq
+        - postgres
+    networks:
+      - backend
+
+  notificacao:
+    build: ./notificacao
+    env_file:
+      - ./secrets/notificacao.env.secreto
+    depends_on:
+      - rabbitmq
+    networks:
+      - backend
+
+  payment:
+    build: ./pagamento
+    env_file:
+      - ./secrets/payment.env.secreto
+    depends_on:
+      - rabbitmq
+    networks:
+      - backend
+
+  postgres:
+    image: postgres:17.0
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=ecommerceapiDB
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq:4.0.5-management
+    ports:
+      - 15672:15672
+      - 5672:5672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - backend
+
+networks:
+  backend:
+    name: ecommerceApi

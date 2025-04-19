@@ -50,7 +50,7 @@ class ProductServiceTest {
     @DisplayName("Must save a product")
     void testGivenProductObject_WhenSaveProduct_thenReturnProduct() {
 
-        given(repository.save(product)).willReturn(product);
+        given(repository.save(any(Product.class))).willReturn(product);
 
         Product savedProduct = service.saveProduct(product);
 
@@ -65,7 +65,7 @@ class ProductServiceTest {
     void testGivenExistingProductName_WhenSaveProduct_thenThrowsException() {
 
         doThrow(ObjectDuplicateException.class)
-                .when(validator).isProductValid(any(Product.class), "product_existing");
+                .when(validator).isProductValid(any(Product.class), eq("product_existing"));
 
         assertThrows(ObjectDuplicateException.class,
                 () -> service.saveProduct(product)
