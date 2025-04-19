@@ -37,7 +37,7 @@ public class UserService {
 
         User newUser = repository.save(user);
 
-        rabbitMqNotificationService.notify(user, notificationExchange, "email.verification");
+        rabbitMqNotificationService.notify(user, "notification.ex", "email.verification");
 
         return newUser;
     }

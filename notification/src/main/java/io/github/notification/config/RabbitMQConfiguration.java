@@ -29,29 +29,29 @@ public class RabbitMQConfiguration {
     @Bean
     public DirectExchange notificationExchange() {
         return ExchangeBuilder
-                .directExchange(notificationEx)
+                .directExchange("notification.ex")
                 .durable(true)
                 .build();
     }
 
     @Bean
     public Queue emailVerificationQueue() {
-        return new Queue(emailVerificationQueue, true);
+        return new Queue("email-verification.ms-notification", true);
     }
 
     @Bean
     public Queue orderCreatedQueue() {
-        return new Queue(orderCreatedQueue, true);
+        return new Queue("order-created.ms-notification", true);
     }
 
     @Bean
     public Queue orderPendingQueue() {
-        return new Queue(orderPendingQueue, true);
+        return new Queue("order-pending.ms-notification", true);
     }
 
     @Bean
     public Queue orderCompleteQueue() {
-        return new Queue(orderCompleteQueue, true);
+        return new Queue("order-complete.ms-notification", true);
     }
 
     @Bean

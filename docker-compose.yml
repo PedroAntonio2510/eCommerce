@@ -1,57 +1,71 @@
-version: '3.8'
-
 services:
-  api-principal:
-    build: ./api-principal
+  api:
+    build: ./api
     ports:
       - "8080:8080"
-    env_file:
-      - ./secrets/api.env.secreto
+#    env_file:
+#      - ./secret/api.env.secret
+    environment:
+      spring.profiles.active: production
     depends_on:
-      - notificacao
-      - pagamento
-      - rabbitmq
-        - postgres
+      rabbit-mq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
     networks:
       - backend
 
   notificacao:
-    build: ./notificacao
-    env_file:
-      - ./secrets/notificacao.env.secreto
+    build: ./notification
+#    env_file:
+#      - ./secret/notification.env.secret
+    environment:
+      spring.profiles.active: production
     depends_on:
-      - rabbitmq
+      rabbit-mq:
+        condition: service_healthy
+      api:
+        condition: service_started
     networks:
       - backend
 
   payment:
-    build: ./pagamento
-    env_file:
-      - ./secrets/payment.env.secreto
+    build: ./payment
+    environment:
+      spring.profiles.active: production
     depends_on:
-      - rabbitmq
+      rabbit-mq:
+          condition: service_healthy
+      api:
+        condition: service_started
     networks:
       - backend
 
-  postgres:
+  db:
     image: postgres:17.0
-    ports:
-      - 5432:5432
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "ecommerceapiDB", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
-      - POSTGRES_DB=ecommerceapiDB
-      - POSTGRES_USERNAME=postgres
-      - POSTGRES_PASSWORD=postgres
+      POSTGRES_DB: ecommerceapiDB
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
     networks:
       - backend
 
-  rabbitmq:
+  rabbit-mq:
     image: rabbitmq:4.0.5-management
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      timeout: 5s
+      interval: 5s
+      retries: 3
     ports:
-      - 15672:15672
-      - 5672:5672
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      - "15672:15672"
+      - "5672:5672"
     networks:
       - backend
 

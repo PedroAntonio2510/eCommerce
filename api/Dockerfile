@@ -5,12 +5,16 @@ COPY pom.xml ./
 COPY src ./src
 RUN mvn dependency:go-offline -B && mvn clean package -DskipTests
 
-
 FROM eclipse-temurin:21-jdk-alpine as runtime
 WORKDIR /app
 
-COPY --from=build /app/target/api-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --from=build /app/target/api-0.0.1-SNAPSHOT.jar ./api.jar
+
+# Copiar os arquivos .yml do diretório correto
+COPY --from=build /app/target/classes/application*.yml /app/config/
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENV TZ='America/Sao_Paulo'
+
+ENTRYPOINT ["java", "-jar", "api.jar"]

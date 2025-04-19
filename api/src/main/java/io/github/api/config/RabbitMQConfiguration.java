@@ -15,20 +15,20 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfiguration {
 
-    @Value("${rabbitmq.order.notification.exchange}")
-    private String notificationExchange;
-
-    @Value("${rabbitmq.order.payment.exchange}")
-    private String paymentNotificationExchange;
+//    @Value("${rabbitmq.order.notification.exchange}")
+//    private String notificationExchange;
+//
+//    @Value("${rabbitmq.order.payment.exchange}")
+//    private String paymentNotificationExchange;
 
     @Bean
     public DirectExchange createDirectNotificationExchange() {
-        return new DirectExchange(notificationExchange);
+        return new DirectExchange("notification.ex");
     }
 
     @Bean
     public DirectExchange createDirectPaymentExchange() {
-        return new DirectExchange(paymentNotificationExchange);
+        return new DirectExchange("payment.ex");
     }
 
     @Bean

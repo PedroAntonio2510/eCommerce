@@ -1,0 +1,31 @@
+spring:
+  rabbitmq:
+    host: rabbit-mq
+    port: 5672
+    username: guest
+    password: guest
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: pedrinhodeccache@gmail.com
+    password: bvoc kcoa gkdw kaan
+    properties:
+      mail:
+        smtpl:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+rabbitmq:
+  exchange:
+    notification: notification.ex
+  queue:
+    created: order-created.ms-notification
+    pending: order-pending.ms-notification
+    complete: order-complete.ms-notification
+    email-verification: email-verification.ms-notification
+
+aws:
+  acessKey: AKIAQWHCQIVS4NYGZ3O2
+  secretKey: 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

@@ -12,16 +12,16 @@ import javax.sql.DataSource;
 public class DatabaseConfig {
 
     @Value("${spring.datasource.username}")
-    String username;
+    private String username;
 
     @Value("${spring.datasource.password}")
-    String password;
+    private String password;
 
     @Value("${spring.datasource.url}")
-    String url;
+    private String url;
 
     @Value("${spring.datasource.driver-class-name}")
-    String driver;
+    private String driver;
 
     @Bean
     public DataSource hikariDataSource() {

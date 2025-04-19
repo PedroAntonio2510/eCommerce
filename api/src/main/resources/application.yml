@@ -1,3 +1,16 @@
+logging:
+  level:
+    root: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health"
+---
 spring:
-  profiles:
-    active: dev
+  config:
+    activate:
+      on-profile: production
+  jpa:
+    show-sql: true

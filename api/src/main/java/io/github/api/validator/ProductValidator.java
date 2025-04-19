@@ -16,10 +16,10 @@ public class ProductValidator {
 
     public boolean isProductValid(Product product, String strategy) {
         boolean strategyImpl = mapStrategy.get(strategy).validate(product);
-        if (strategyImpl) {
-            return strategyImpl;
+        if (!strategyImpl) {
+            throw new ObjectDuplicateException("Produto ja existe");
         }
-        throw new ObjectDuplicateException("Produto ja existe");
+        return strategyImpl;
     }
 
 }

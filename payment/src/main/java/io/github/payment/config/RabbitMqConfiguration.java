@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMqConfiguration {
 
-    @Value("${rabbitmq.exchange.payment}")
-    private String paymentEx;
+//    @Value("${rabbitmq.exchange.payment}")
+//    private String paymentEx;
 
     @Bean
     public DirectExchange paymentExchange() {
         return ExchangeBuilder
-                .directExchange(paymentEx)
+                .directExchange("payment.ex")
                 .durable(true)
                 .build();
     }

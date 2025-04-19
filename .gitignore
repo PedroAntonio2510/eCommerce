@@ -19,9 +19,5 @@ target/
 *.iml
 *.ipr
 
-.local
-*.png
-application-dev.yml
-application-production.yml
-app.key
-app.pub
+
+/secret/*
